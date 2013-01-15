@@ -39,18 +39,22 @@ public class Board extends JPanel implements ActionListener {
     }
 
 
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
 
         Graphics2D g2d = (Graphics2D)g;
-        for(int i = 0; i < 10000; i++)
-        g2d.drawImage(craft.getImage(), random.nextInt(400), random.nextInt(300), this);
+        //for(int i = 0; i < 10000; i++) {
+        //    g2d.drawImage(craft.getImage(), random.nextInt(400), random.nextInt(300), this);
+        //}
+        g2d.drawImage(craft.getImage(), craft.getX(), craft.getY(), this);
 
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
     }
 
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         craft.move();
         repaint();  
@@ -59,10 +63,12 @@ public class Board extends JPanel implements ActionListener {
 
     private class TAdapter extends KeyAdapter {
 
+        @Override
         public void keyReleased(KeyEvent e) {
             craft.keyReleased(e);
         }
 
+        @Override
         public void keyPressed(KeyEvent e) {
             craft.keyPressed(e);
         }

@@ -1,0 +1,4 @@
+tue 15.01.2013 - 3 hrs
+	-set up repository
+	-wrote description
+	-experimented with rendering sprites in java

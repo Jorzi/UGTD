@@ -1,0 +1,10 @@
+Subject: Tower defence game
+
+A single-player strategy game where enemies appear on a map and navigate themselves towards a target. 
+The objective is to place towers in order to destroy the enemies before they can reach the target.
+Enemies do not attack towers an must navigate around them, thus possibly lengthening the path they have to travel.
+Towers can be placed in any configuration but must allow at least one free path for the enemies to reach the target.
+The amount of towers the player can place are dependent on the price of the tower and the amount of credits available to the player.
+Credits are either a fixed amount, or are earned by destroying enemies.
+If too many enemies reach the target, the game ends.
+The scores are counted according to the amount of enemies destroyed before the game ends.

@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 
 public class Craft {
 
-    private String craft = "/stickman.png";
+    private String craft = "/craft.png";
 
     private int dx;
     private int dy;
