@@ -16,6 +16,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import terrain.TerrainMap;
 
 
 public class Board extends JPanel implements ActionListener {
@@ -23,6 +24,7 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
     private Craft craft;
     private Random random;
+    private terrain.TerrainMap map;
 
     public Board() {
 
@@ -32,6 +34,7 @@ public class Board extends JPanel implements ActionListener {
         setDoubleBuffered(true);
 
         craft = new Craft();
+        map = new TerrainMap("map1.png");
 
         timer = new Timer(5, this);
         timer.start();
@@ -42,11 +45,12 @@ public class Board extends JPanel implements ActionListener {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        map.paint(g, this);
 
         Graphics2D g2d = (Graphics2D)g;
-        //for(int i = 0; i < 10000; i++) {
-        //    g2d.drawImage(craft.getImage(), random.nextInt(400), random.nextInt(300), this);
-        //}
+//        for(int i = 0; i < 10000; i++) {
+//            g2d.drawImage(craft.getImage(), random.nextInt(400), random.nextInt(300), this);
+//        }
         g2d.drawImage(craft.getImage(), craft.getX(), craft.getY(), this);
 
         Toolkit.getDefaultToolkit().sync();
@@ -72,6 +76,7 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             craft.keyPressed(e);
         }
+        
     }
 
 }

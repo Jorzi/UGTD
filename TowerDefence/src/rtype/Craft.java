@@ -6,26 +6,30 @@ package rtype;
 
 import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
-import javax.swing.ImageIcon;
 
 public class Craft {
 
-    private String craft = "/craft.png";
-
+    private String craft = "craft.png";
     private int dx;
     private int dy;
     private int x;
     private int y;
-    private Image image;
+    private BufferedImage image;
 
     public Craft() {
-        ImageIcon ii = new ImageIcon(this.getClass().getResource(craft));
-        image = ii.getImage();
+        try {
+            image = ImageIO.read(new File(craft));
+        } catch (IOException e) {
+            System.out.println("couldn't find image " + image);
+        }
         x = 40;
         y = 60;
     }
-
 
     public void move() {
         x += dx;
