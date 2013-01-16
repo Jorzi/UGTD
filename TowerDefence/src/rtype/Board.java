@@ -51,8 +51,10 @@ public class Board extends JPanel implements ActionListener {
 //        for(int i = 0; i < 10000; i++) {
 //            g2d.drawImage(craft.getImage(), random.nextInt(400), random.nextInt(300), this);
 //        }
-        g2d.drawImage(craft.getImage(), craft.getX(), craft.getY(), this);
-
+        g2d.translate((int)craft.getX() + 64, (int)craft.getY() + 64); 
+        g2d.rotate(craft.getAngle());
+        g2d.translate(-64, -64);
+        g2d.drawImage(craft.getImage(), 0, 0, this);
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
     }

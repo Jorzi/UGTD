@@ -11,14 +11,16 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-
 public class Craft {
 
     private String craft = "craft.png";
-    private int dx;
-    private int dy;
-    private int x;
-    private int y;
+    private double dx;
+    private double dy;
+    private double x;
+    private double y;
+    private double v;
+    private double angle;
+    private double da;
     private BufferedImage image;
 
     public Craft() {
@@ -32,16 +34,21 @@ public class Craft {
     }
 
     public void move() {
-        x += dx;
-        y += dy;
+        x += v * Math.cos(angle);
+        y += v * Math.sin(angle);
+        angle += da;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
+    }
+
+    public double getAngle() {
+        return angle;
     }
 
     public Image getImage() {
@@ -53,19 +60,19 @@ public class Craft {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
-            dx = -1;
+            v = -1;
         }
 
         if (key == KeyEvent.VK_RIGHT) {
-            dx = 1;
+            v = 1;
         }
 
         if (key == KeyEvent.VK_UP) {
-            dy = -1;
+            da = -0.01;
         }
 
         if (key == KeyEvent.VK_DOWN) {
-            dy = 1;
+            da = 0.01;
         }
     }
 
@@ -73,19 +80,19 @@ public class Craft {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
-            dx = 0;
+            v = 0;
         }
 
         if (key == KeyEvent.VK_RIGHT) {
-            dx = 0;
+            v = 0;
         }
 
         if (key == KeyEvent.VK_UP) {
-            dy = 0;
+            da = 0;
         }
 
         if (key == KeyEvent.VK_DOWN) {
-            dy = 0;
+            da = 0;
         }
     }
 }
