@@ -4,10 +4,18 @@
  */
 package units;
 
+import java.util.HashSet;
+import terrain.MapTile;
+import terrain.TerrainMap;
+
 /**
  *
  * @author Göran
  */
 public class Enemy {
+    
+    
+    
+        
     
 }

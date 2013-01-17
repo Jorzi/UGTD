@@ -13,9 +13,7 @@ import javax.imageio.ImageIO;
 
 public class Craft {
 
-    private String craft = "craft.png";
-    private double dx;
-    private double dy;
+    private String craft = "tank1.png";
     private double x;
     private double y;
     private double v;
