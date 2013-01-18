@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import rtype.Craft;
 import terrain.TerrainMap;
+import units.Tower;
 
 /**
  *
@@ -26,7 +27,8 @@ public class GameInstance extends JPanel implements ActionListener{
     private Timer timer;
     private Craft craft;
     private Random random;
-    private terrain.TerrainMap map;
+    private TerrainMap map;
+    private units.Tower tower;
 
     public GameInstance() {
 
@@ -38,6 +40,7 @@ public class GameInstance extends JPanel implements ActionListener{
         craft = new Craft();
         map = new TerrainMap("map1.png");
         random = new Random();
+        tower = new Tower(10, 10);
 
         timer = new Timer(10, this);
         timer.start();
@@ -48,6 +51,7 @@ public class GameInstance extends JPanel implements ActionListener{
     public void paint(Graphics g) {
         super.paint(g);
         map.paint(g, this);
+        tower.paint(g, this);
 
         Graphics2D g2d = (Graphics2D)g;
 //        for(int i = 0; i < 1000; i++) {
@@ -65,6 +69,7 @@ public class GameInstance extends JPanel implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         craft.move();
+        tower.update();
         repaint();  
     }
 
