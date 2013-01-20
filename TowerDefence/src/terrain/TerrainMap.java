@@ -4,6 +4,7 @@
  */
 package terrain;
 
+import game.GlobalConstants;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -97,9 +98,9 @@ public class TerrainMap {
         for (int i = 0; i < pixels.length; i++) {
             for (int j = 0; j < pixels[0].length; j++) {
                 if (pixels[i][j] == 0) {
-                    g2d.drawImage(tile1, 16 * i, 16 * j, imOb);
+                    g2d.drawImage(tile1, GlobalConstants.tileSize * i, GlobalConstants.tileSize * j, imOb);
                 } else {
-                    g2d.drawImage(tile2, 16 * i, 16 * j, imOb);
+                    g2d.drawImage(tile2, GlobalConstants.tileSize * i, GlobalConstants.tileSize * j, imOb);
                 }
             }
         }

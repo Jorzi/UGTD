@@ -38,6 +38,16 @@ public class MapTile {
     public Boolean isPassable() {
         return passable;
     }
+
+    public void setEnemy(Enemy enemy) {
+        this.enemy = enemy;
+    }
+
+    public Enemy getEnemy() {
+        return enemy;
+    }
+    
+    
     
     
     

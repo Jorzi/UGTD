@@ -17,10 +17,10 @@ public class Main extends JFrame{
         add(new GameInstance());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(96*16 + 6, 64*16 + 6);
+        setSize(96*GlobalConstants.tileSize + 6, 64*GlobalConstants.tileSize + 6);
         setLocationRelativeTo(null);
         setTitle("Ultra Generic Tower Defence");
-        setResizable(false);
+        setResizable(true);
         setVisible(true);
     }
 

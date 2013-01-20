@@ -4,6 +4,7 @@
  */
 package units;
 
+import game.GlobalConstants;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -18,7 +19,7 @@ import javax.imageio.ImageIO;
  * @author Göran
  */
 public class Tower {
-    
+
     private int centerX = 16;
     private int centerY = 32;
     private int tileX;
@@ -38,23 +39,21 @@ public class Tower {
             System.out.println("couldn't find image");
         }
     }
-    
-    
-    public void update(){
+
+    public void update() {
         angle += da;
     }
-    
+
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.translate(tileX * 16, tileY * 16);
-        g2d.drawImage(baseImage, 0, 0, imOb);
         AffineTransform a = g2d.getTransform();
+        g2d.translate(tileX * GlobalConstants.tileSize, tileY * GlobalConstants.tileSize);
+        g2d.drawImage(baseImage, 0, 0, imOb);
         g2d.translate(centerX, centerX); //hack takes into account the varying heights(->positions) of the images
         g2d.rotate(angle);
         g2d.translate(-centerX, -centerY);
         g2d.drawImage(turretImage, 0, 0, imOb);
         g2d.setTransform(a);
-        
+
     }
-    
 }
