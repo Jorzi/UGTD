@@ -10,8 +10,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
+import javax.imageio.ImageIO;
 import terrain.MapTile;
 import terrain.TerrainMap;
 
@@ -27,13 +30,26 @@ public class Enemy {
     private double y;
     private double angle;
     private double targetAngle;
-    private double da;
+    private double da = 0.05;
     private double tileProgress;
     private double invDistFac;
+    private double speed; // tiles/frame, keep this between 0 and 1
     private BufferedImage image;
     private LinkedList<MapTile> path; // stack of tiles left to traverse
     private MapTile currentTile;
 
+    public Enemy(LinkedList<MapTile> path) {
+        try {
+            image = ImageIO.read(new File("tank1.png"));
+        } catch (IOException e) {
+            System.out.println("couldn't find image");
+        }
+        this.path = path;
+        currentTile = path.pop();
+        tileProgress = 0;
+        this.update();
+    }
+    
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform a = g2d.getTransform();
@@ -51,21 +67,38 @@ public class Enemy {
 
     public void update() {
         move();
-        x = (currentTile.getX() * GlobalConstants.tileSize)* (1 - tileProgress) + (path.peek().getX() * GlobalConstants.tileSize) * tileProgress;
-        y = (currentTile.getY() * GlobalConstants.tileSize)* (1 - tileProgress) + (path.peek().getY() * GlobalConstants.tileSize) * tileProgress;
+        x = (currentTile.getX() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getX() * GlobalConstants.tileSize) * tileProgress;
+        y = (currentTile.getY() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getY() * GlobalConstants.tileSize) * tileProgress;
     }
 
     private void move() {
         if (tileProgress >= 1) {
-
             if (path.peek().getEnemy() == null) {
                 currentTile.setEnemy(null);
                 currentTile = path.pop();
                 currentTile.setEnemy(this);
                 setTargetAngle();
+                tileProgress = 0;
+            }else{
+                return;
             }
         }
-
+        if (angle != targetAngle) {
+            double angleDifference = angle - targetAngle;
+            if (Math.min(Math.abs(angleDifference), 2 * Math.PI - Math.abs(angleDifference)) < da) {
+                angle = targetAngle;
+            } else if (angleDifference > Math.PI) {
+                angle += da;
+            } else if (angleDifference > 0) {
+                angle -= da;
+            } else if (angleDifference > -Math.PI) {
+                angle += da;
+            } else {
+                angle -= da;
+            }
+        } else {
+            tileProgress += speed * invDistFac;
+        }
     }
 
     private void setTargetAngle() {

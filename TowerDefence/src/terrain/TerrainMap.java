@@ -24,7 +24,7 @@ import javax.imageio.ImageIO;
  */
 public class TerrainMap {
 
-    public static int[] target = {16, 16};
+    public static int[] target = {16, 52};
     private BufferedImage mapImage;
     private BufferedImage tile1;
     private BufferedImage tile2;
@@ -92,6 +92,10 @@ public class TerrainMap {
             }
         }
     }
+    
+    public MapTile getTile(int x, int y){
+        return navigationGraph[x][y];
+    }
 
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
@@ -106,7 +110,7 @@ public class TerrainMap {
         }
     }
 
-    public List<MapTile> generatePath(int startX, int startY) {
+    public LinkedList<MapTile> generatePath(int startX, int startY) {
         HashSet<MapTile> closedSet = new HashSet<MapTile>();
         PriorityQueue<Node> openSet = new PriorityQueue<Node>();
         HashMap<MapTile, Node> openSet2 = new HashMap<MapTile, Node>(); // same as openSet in a different data structure
@@ -118,7 +122,7 @@ public class TerrainMap {
         while (!openSet.isEmpty()) {
             Node current = openSet.remove();
             if(current.tile.equals(navigationGraph[target[0]][target[1]])){
-                while (current.prev != null){
+                while (current != null){
                     route.push(current.tile);
                     current = openSet2.get(current.prev);
                 }
@@ -136,6 +140,7 @@ public class TerrainMap {
                         Node neighbour = new Node(tile, tentativeDist, heur, current.tile);
                         openSet.add(neighbour);
                         openSet2.put(tile, neighbour);
+                        openSet2.get(tile).prev = current.tile;
                         }else{
                             openSet2.get(tile).dist = tentativeDist;
                             openSet2.get(tile).prev = current.tile;

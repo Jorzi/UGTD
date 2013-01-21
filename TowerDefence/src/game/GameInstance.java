@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JPanel;
@@ -48,6 +49,7 @@ public class GameInstance extends JPanel implements ActionListener {
         random = new Random();
         towerList = new ArrayList<Tower>();
         towerList.add(new Tower(10, 10));
+        this.addEnemy(87, 45);
 
         timer = new Timer(10, this);
         timer.start();
@@ -69,6 +71,7 @@ public class GameInstance extends JPanel implements ActionListener {
         g2d.rotate(craft.getAngle() + Math.PI / 2);
         g2d.translate(-8, -8);
         g2d.drawImage(craft.getImage(), 0, 0, this);
+        
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
     }
@@ -96,5 +99,13 @@ public class GameInstance extends JPanel implements ActionListener {
     }
 
     public void addTower(String type, int x, int y) {
+    }
+    
+    public void addEnemy(int x, int y){
+        if(map.getTile(x, y) != null){
+        enemyList.add(new Enemy(map.generatePath(x, y)));
+        }else{
+            System.out.println("cannot place enemy");
+        }
     }
 }
