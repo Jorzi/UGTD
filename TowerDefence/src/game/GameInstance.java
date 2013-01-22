@@ -53,14 +53,15 @@ public class GameInstance extends JPanel implements ActionListener {
         //this.addEnemy(87, 45);
         enemyList = new ArrayList<Enemy>();
         
-        LinkedList<MapTile> examplePath = new LinkedList<MapTile>();
-        examplePath.add(map.getTile(91, 44));
-        examplePath.add(map.getTile(90, 44));
-        examplePath.add(map.getTile(89, 44));
-        examplePath.add(map.getTile(88, 43));
-        examplePath.add(map.getTile(87, 42));
-        examplePath.add(map.getTile(87, 41));
-        enemyList.add(new Enemy(examplePath));
+//        LinkedList<MapTile> examplePath = new LinkedList<MapTile>();
+//        examplePath.add(map.getTile(91, 44));
+//        examplePath.add(map.getTile(90, 44));
+//        examplePath.add(map.getTile(89, 44));
+//        examplePath.add(map.getTile(88, 43));
+//        examplePath.add(map.getTile(87, 42));
+//        examplePath.add(map.getTile(87, 41));
+        //enemyList.add(new Enemy(examplePath));
+        addEnemy(92, 45);
 
         timer = new Timer(10, this);
         timer.start();

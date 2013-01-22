@@ -45,10 +45,11 @@ public class Enemy {
         this.path = path;
         currentTile = path.pop();
         tileProgress = 0;
+        speed = 0.02;
         setTargetAngle();
         angle = targetAngle;
     }
-    
+
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform a = g2d.getTransform();
@@ -67,10 +68,7 @@ public class Enemy {
     public void update() {
         move();
         x = (currentTile.getX() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getX() * GlobalConstants.tileSize) * tileProgress;
-        System.out.println("X:" + x);
         y = (currentTile.getY() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getY() * GlobalConstants.tileSize) * tileProgress;
-        System.out.println("Y:" + y);
-        System.out.println("angle:" + angle);
     }
 
     private void move() {
@@ -81,7 +79,7 @@ public class Enemy {
                 currentTile.setEnemy(this);
                 setTargetAngle();
                 tileProgress = 0;
-            }else{
+            } else {
                 return;
             }
         }
@@ -108,8 +106,8 @@ public class Enemy {
     }
 
     private void setTargetAngle() {
-        int dx = - currentTile.getX() + path.peek().getX();
-        int dy = - currentTile.getY() + path.peek().getY();
+        int dx = -currentTile.getX() + path.peek().getX();
+        int dy = -currentTile.getY() + path.peek().getY();
         if (dx == 1 && dy == 0) {
             targetAngle = 0;
             invDistFac = 1.0;
