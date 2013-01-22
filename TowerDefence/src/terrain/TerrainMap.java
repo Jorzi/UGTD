@@ -128,7 +128,7 @@ public class TerrainMap {
                 }
                 return route;
             }
-            openSet2.remove(current.tile);
+            //openSet2.remove(current.tile);
             
             closedSet.add(current.tile);
             for (MapTile tile:current.tile.neighbours.keySet()){
@@ -140,7 +140,7 @@ public class TerrainMap {
                         Node neighbour = new Node(tile, tentativeDist, heur, current.tile);
                         openSet.add(neighbour);
                         openSet2.put(tile, neighbour);
-                        openSet2.get(tile).prev = current.tile;
+                        neighbour.prev = current.tile;
                         }else{
                             openSet2.get(tile).dist = tentativeDist;
                             openSet2.get(tile).prev = current.tile;

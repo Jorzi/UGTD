@@ -12,11 +12,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import terrain.MapTile;
-import terrain.TerrainMap;
 
 /**
  *
@@ -47,15 +45,17 @@ public class Enemy {
         this.path = path;
         currentTile = path.pop();
         tileProgress = 0;
-        this.update();
+        speed = 0.02;
+        setTargetAngle();
+        angle = targetAngle;
     }
-    
+
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform a = g2d.getTransform();
         g2d.translate(x, y);
         g2d.translate(centerX, centerY);
-        g2d.rotate(angle);
+        g2d.rotate(angle + Math.PI * 0.5);
         g2d.translate(-centerX, -centerY);
         g2d.drawImage(image, 0, 0, imOb);
         g2d.setTransform(a);
@@ -79,7 +79,7 @@ public class Enemy {
                 currentTile.setEnemy(this);
                 setTargetAngle();
                 tileProgress = 0;
-            }else{
+            } else {
                 return;
             }
         }
@@ -89,12 +89,16 @@ public class Enemy {
                 angle = targetAngle;
             } else if (angleDifference > Math.PI) {
                 angle += da;
+                angle %= 2 * Math.PI;
             } else if (angleDifference > 0) {
                 angle -= da;
+                angle %= 2 * Math.PI;
             } else if (angleDifference > -Math.PI) {
                 angle += da;
+                angle %= 2 * Math.PI;
             } else {
                 angle -= da;
+                angle %= 2 * Math.PI;
             }
         } else {
             tileProgress += speed * invDistFac;
@@ -102,8 +106,8 @@ public class Enemy {
     }
 
     private void setTargetAngle() {
-        int dx = currentTile.getX() - path.pollFirst().getX();
-        int dy = currentTile.getY() - path.pollFirst().getY();
+        int dx = -currentTile.getX() + path.peek().getX();
+        int dy = -currentTile.getY() + path.peek().getY();
         if (dx == 1 && dy == 0) {
             targetAngle = 0;
             invDistFac = 1.0;
