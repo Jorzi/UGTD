@@ -2,3 +2,19 @@ tue 15.01.2013 - 3 hrs
 	-set up repository
 	-wrote description
 	-experimented with rendering sprites in java
+
+wed 16.01.2013 - 3 hrs
+	-wrote TerrainMap object + tile placement from bitmap
+	-Added necessary classes
+	
+thu 17.01.2013 - 3 hrs
+	-implemented A* pathfinding. Not tested yet.
+
+fri 18.01.2013 - 1 hr
+	-added update and draw methods for tower
+
+sun 20.01.2013 - 2 hrs
+	-wrote some methods & fields for enemy class
+
+mon 21.01.2013 - 2 hrs
+	-finished path navigation code for enemies
