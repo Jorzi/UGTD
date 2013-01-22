@@ -33,10 +33,10 @@ public class GameInstance extends JPanel implements ActionListener {
     private Timer timer;
     private Craft craft;
     private Random random;
-    private TerrainMap map;
+    public TerrainMap map;
     
-    private List<Tower> towerList;
-    private List<Enemy> enemyList;
+    public List<Tower> towerList;
+    public List<Enemy> enemyList;
 
     public GameInstance() {
 
