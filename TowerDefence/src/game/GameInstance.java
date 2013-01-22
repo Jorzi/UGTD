@@ -19,6 +19,7 @@ import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import rtype.Craft;
+import terrain.MapTile;
 import terrain.TerrainMap;
 import units.Enemy;
 import units.Tower;
@@ -49,7 +50,17 @@ public class GameInstance extends JPanel implements ActionListener {
         random = new Random();
         towerList = new ArrayList<Tower>();
         towerList.add(new Tower(10, 10));
-        this.addEnemy(87, 45);
+        //this.addEnemy(87, 45);
+        enemyList = new ArrayList<Enemy>();
+        
+        LinkedList<MapTile> examplePath = new LinkedList<MapTile>();
+        examplePath.add(map.getTile(91, 44));
+        examplePath.add(map.getTile(90, 44));
+        examplePath.add(map.getTile(89, 44));
+        examplePath.add(map.getTile(88, 43));
+        examplePath.add(map.getTile(87, 42));
+        examplePath.add(map.getTile(87, 41));
+        enemyList.add(new Enemy(examplePath));
 
         timer = new Timer(10, this);
         timer.start();
@@ -61,6 +72,9 @@ public class GameInstance extends JPanel implements ActionListener {
         map.paint(g, this);
         for (Tower tower : towerList) {
             tower.paint(g, this);
+        }
+        for (Enemy enemy : enemyList){
+            enemy.paint(g, this);
         }
 
         Graphics2D g2d = (Graphics2D) g;
@@ -81,6 +95,9 @@ public class GameInstance extends JPanel implements ActionListener {
         craft.move();
         for (Tower tower : towerList) {
             tower.update();
+        }
+        for (Enemy enemy : enemyList){
+            enemy.update();
         }
         repaint();
     }
