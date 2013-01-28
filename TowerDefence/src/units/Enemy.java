@@ -35,6 +35,7 @@ public class Enemy {
     private BufferedImage image;
     private LinkedList<MapTile> path; // stack of tiles left to traverse
     private MapTile currentTile;
+    private boolean arrived;
 
     public Enemy(LinkedList<MapTile> path) {
         try {
@@ -67,41 +68,49 @@ public class Enemy {
 
     public void update() {
         move();
-        x = (currentTile.getX() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getX() * GlobalConstants.tileSize) * tileProgress;
-        y = (currentTile.getY() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getY() * GlobalConstants.tileSize) * tileProgress;
+        if (!arrived) {
+            x = (currentTile.getX() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getX() * GlobalConstants.tileSize) * tileProgress;
+            y = (currentTile.getY() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getY() * GlobalConstants.tileSize) * tileProgress;
+        }
     }
 
     private void move() {
-        if (tileProgress >= 1) {
-            if (path.peek().getEnemy() == null) {
-                currentTile.setEnemy(null);
-                currentTile = path.pop();
-                currentTile.setEnemy(this);
-                setTargetAngle();
-                tileProgress = 0;
-            } else {
-                return;
+        if (!arrived) {
+            if (tileProgress >= 1) {
+                if (path.peek().getEnemy() == null) {
+                    currentTile.setEnemy(null);
+                    currentTile = path.pop();
+                    if (path.isEmpty()) {
+                        arrived = true;
+                        return;
+                    }
+                    currentTile.setEnemy(this);
+                    setTargetAngle();
+                    tileProgress = 0;
+                } else {
+                    return;
+                }
             }
-        }
-        if (angle != targetAngle) {
-            double angleDifference = angle - targetAngle;
-            if (Math.min(Math.abs(angleDifference), 2 * Math.PI - Math.abs(angleDifference)) < da) {
-                angle = targetAngle;
-            } else if (angleDifference > Math.PI) {
-                angle += da;
-                angle %= 2 * Math.PI;
-            } else if (angleDifference > 0) {
-                angle -= da;
-                angle %= 2 * Math.PI;
-            } else if (angleDifference > -Math.PI) {
-                angle += da;
-                angle %= 2 * Math.PI;
+            if (angle != targetAngle) {
+                double angleDifference = angle - targetAngle;
+                if (Math.min(Math.abs(angleDifference), 2 * Math.PI - Math.abs(angleDifference)) < da) {
+                    angle = targetAngle;
+                } else if (angleDifference > Math.PI) {
+                    angle += da;
+                    angle %= 2 * Math.PI;
+                } else if (angleDifference > 0) {
+                    angle -= da;
+                    angle %= 2 * Math.PI;
+                } else if (angleDifference > -Math.PI) {
+                    angle += da;
+                    angle %= 2 * Math.PI;
+                } else {
+                    angle -= da;
+                    angle %= 2 * Math.PI;
+                }
             } else {
-                angle -= da;
-                angle %= 2 * Math.PI;
+                tileProgress += speed * invDistFac;
             }
-        } else {
-            tileProgress += speed * invDistFac;
         }
     }
 

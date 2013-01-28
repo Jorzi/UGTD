@@ -24,7 +24,7 @@ import javax.imageio.ImageIO;
  */
 public class TerrainMap {
 
-    public static int[] target = {16, 52};
+    public static int[] target = {9, 26};
     private BufferedImage mapImage;
     private BufferedImage tile1;
     private BufferedImage tile2;

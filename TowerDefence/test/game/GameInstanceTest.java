@@ -1,3 +1,5 @@
+package game;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -16,9 +18,9 @@ import static org.junit.Assert.*;
  *
  * @author Göran
  */
-public class NewTest {
+public class GameInstanceTest {
     
-    public NewTest() {
+    public GameInstanceTest() {
     }
     
     @BeforeClass
@@ -31,6 +33,7 @@ public class NewTest {
     
     @Before
     public void setUp() {
+        
     }
     
     @After
@@ -41,9 +44,25 @@ public class NewTest {
     //
     @Test
     public void gameInstanceInitialisation() {
-        GameInstance game = new GameInstance();
+        GameInstance game = new GameInstance("map2.png");
         assertTrue(game.map != null);
         assertTrue(game.enemyList != null);
         assertTrue(game.towerList != null);
+    }
+    
+    @Test
+    public void enemyGetsAdded() {
+        GameInstance game = new GameInstance("map2.png");
+        int size = game.enemyList.size();
+        game.addEnemy(47, 10);
+        assertEquals(size + 1, game.enemyList.size());
+    }
+    
+    @Test
+    public void towerGetsAdded() {
+        GameInstance game = new GameInstance("map2.png");
+        int size = game.towerList.size();
+        game.addTower("", 16, 16);
+        assertEquals(size + 1, game.towerList.size());
     }
 }
