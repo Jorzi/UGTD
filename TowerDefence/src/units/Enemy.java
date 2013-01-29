@@ -44,11 +44,12 @@ public class Enemy {
             System.out.println("couldn't find image");
         }
         this.path = path;
-        currentTile = path.pop();
+        currentTile = this.path.pop();
         tileProgress = 0;
         speed = 0.02;
         setTargetAngle();
         angle = targetAngle;
+        arrived = false;
     }
 
     public void paint(Graphics g, ImageObserver imOb) {
@@ -144,4 +145,9 @@ public class Enemy {
         }
 
     }
+
+    public boolean isArrived() {
+        return arrived;
+    }
+    
 }

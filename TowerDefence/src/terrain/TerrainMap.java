@@ -110,6 +110,16 @@ public class TerrainMap {
         }
     }
 
+    public int[][] getPixels() {
+        return pixels;
+    }
+
+    public BufferedImage getMapImage() {
+        return mapImage;
+    }
+    
+    
+
     public LinkedList<MapTile> generatePath(int startX, int startY) {
         HashSet<MapTile> closedSet = new HashSet<MapTile>();
         PriorityQueue<Node> openSet = new PriorityQueue<Node>();

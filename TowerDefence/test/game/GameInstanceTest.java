@@ -59,6 +59,14 @@ public class GameInstanceTest {
     }
     
     @Test
+    public void enemyNotAddedOnRock() {
+        GameInstance game = new GameInstance("map2.png");
+        int size = game.enemyList.size();
+        game.addEnemy(0, 0);
+        assertEquals(size, game.enemyList.size());
+    }
+    
+    @Test
     public void towerGetsAdded() {
         GameInstance game = new GameInstance("map2.png");
         int size = game.towerList.size();

@@ -24,7 +24,7 @@ import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import rtype.Craft;
+
 import terrain.MapTile;
 import terrain.TerrainMap;
 import units.Enemy;
@@ -37,7 +37,6 @@ import units.Tower;
 public class GameInstance extends JPanel implements ActionListener {
 
     private Timer timer;
-    private Craft craft;
     private Random random;
     private Point mouseCoords;
     public TerrainMap map;
@@ -51,7 +50,6 @@ public class GameInstance extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
         
-        craft = new Craft();
         map = new TerrainMap(mapName);
         random = new Random();
         towerList = new ArrayList<>();
@@ -74,8 +72,8 @@ public class GameInstance extends JPanel implements ActionListener {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-
         map.paint(g, this);
+        
         for (Tower tower : towerList) {
             tower.paint(g, this);
         }
@@ -89,15 +87,7 @@ public class GameInstance extends JPanel implements ActionListener {
         g2d.drawRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
         g2d.setColor(new Color(200, 20, 20, 96));
         g2d.fillRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
-//        for(int i = 0; i < 1000; i++) {
-//            g2d.drawImage(craft.getImage(), random.nextInt(400), random.nextInt(300), this);
-//        }
-        AffineTransform a = g2d.getTransform();
-        g2d.translate((int) craft.getX() + 8, (int) craft.getY() + 8);
-        g2d.rotate(craft.getAngle() + Math.PI / 2);
-        g2d.translate(-8, -8);
-        g2d.drawImage(craft.getImage(), 0, 0, this);
-        g2d.setTransform(a);
+
 
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
@@ -113,7 +103,6 @@ public class GameInstance extends JPanel implements ActionListener {
             
         }
 
-        craft.move();
         for (Tower tower : towerList) {
             tower.update();
         }
@@ -127,12 +116,10 @@ public class GameInstance extends JPanel implements ActionListener {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            craft.keyReleased(e);
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            craft.keyPressed(e);
         }
     }
 
