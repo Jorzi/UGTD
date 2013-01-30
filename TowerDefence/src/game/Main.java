@@ -4,8 +4,6 @@
  */
 package game;
 
-import java.awt.LayoutManager;
-import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,15 +18,11 @@ public class Main extends JFrame {
     private JPanel game;
 
     public Main() {
-        game = new GameInterface();
-        add(game);
-
 
         
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setSize(game.getPreferredSize().width, game.getPreferredSize().height + 32);
         //this.setExtendedState(this.getExtendedState() | this.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setTitle("Ultra Generic Tower Defence");
@@ -39,6 +33,6 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
-        new Main();
+        GameFrame.main(args);
     }
 }

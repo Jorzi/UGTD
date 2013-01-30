@@ -36,6 +36,13 @@ import units.Tower;
  */
 public class GameInstance extends JPanel implements ActionListener {
 
+    public static enum mode {
+
+        BUILD, SELECT, SELL
+    }
+    public static mode mode;
+    public static int credits = 100;
+    
     private Timer timer;
     private Random random;
     private Point mouseCoords;
@@ -47,9 +54,9 @@ public class GameInstance extends JPanel implements ActionListener {
 
         addKeyListener(new TAdapter());
         setFocusable(true);
-        setBackground(Color.BLACK);
         setDoubleBuffered(true);
-        
+
+        mode = mode.SELECT;
         map = new TerrainMap(mapName);
         random = new Random();
         towerList = new ArrayList<>();
@@ -69,11 +76,15 @@ public class GameInstance extends JPanel implements ActionListener {
         timer.start();
     }
 
+    public static void setMode(mode mode) {
+        GameInstance.mode = mode;
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         map.paint(g, this);
-        
+
         for (Tower tower : towerList) {
             tower.paint(g, this);
         }
@@ -83,11 +94,12 @@ public class GameInstance extends JPanel implements ActionListener {
 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.RED);
-        g2d.drawString(mouseCoords.x + " " + mouseCoords.y, 0, 15);
-        g2d.drawRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
-        g2d.setColor(new Color(200, 20, 20, 96));
-        g2d.fillRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
-
+        g2d.drawString(mouseCoords.x + " " + mouseCoords.y + " " + mode, 0, 15);
+        if (mode == mode.SELECT) {
+            g2d.drawRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
+            g2d.setColor(new Color(200, 20, 20, 96));
+            g2d.fillRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
+        }
 
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
@@ -96,11 +108,10 @@ public class GameInstance extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         mouseCoords = MouseInfo.getPointerInfo().getLocation();
-        try{
-        mouseCoords.x -= this.getLocationOnScreen().x;
-        mouseCoords.y -= this.getLocationOnScreen().y;
-        }catch(IllegalComponentStateException ex){
-            
+        try {
+            mouseCoords.x -= this.getLocationOnScreen().x;
+            mouseCoords.y -= this.getLocationOnScreen().y;
+        } catch (IllegalComponentStateException ex) {
         }
 
         for (Tower tower : towerList) {
@@ -109,6 +120,8 @@ public class GameInstance extends JPanel implements ActionListener {
         for (Enemy enemy : enemyList) {
             enemy.update();
         }
+        
+        credits++;
         repaint();
     }
 
@@ -120,6 +133,11 @@ public class GameInstance extends JPanel implements ActionListener {
 
         @Override
         public void keyPressed(KeyEvent e) {
+            int key = e.getKeyCode();
+            
+            if (key == KeyEvent.VK_ESCAPE) {
+                setMode(mode.SELECT);
+            }
         }
     }
 
