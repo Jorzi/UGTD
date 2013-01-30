@@ -5,7 +5,6 @@
 package game;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.IllegalComponentStateException;
@@ -16,12 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -46,15 +45,18 @@ public class GameInstance extends JPanel implements ActionListener {
     private Timer timer;
     private Random random;
     private Point mouseCoords;
+    private Point mouseTileCoords = new Point();
     public TerrainMap map;
     public List<Tower> towerList;
     public List<Enemy> enemyList;
+    private boolean buildable;
 
     public GameInstance(String mapName) {
 
         addKeyListener(new TAdapter());
         setFocusable(true);
         setDoubleBuffered(true);
+        addMouseListener(new mouseInput());
 
         mode = mode.SELECT;
         map = new TerrainMap(mapName);
@@ -95,14 +97,33 @@ public class GameInstance extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.RED);
         g2d.drawString(mouseCoords.x + " " + mouseCoords.y + " " + mode, 0, 15);
-        if (mode == mode.SELECT) {
-            g2d.drawRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
-            g2d.setColor(new Color(200, 20, 20, 96));
-            g2d.fillRect(mouseCoords.x - mouseCoords.x % GlobalConstants.tileSize, mouseCoords.y - mouseCoords.y % GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
-        }
+        paintCursor(g);
+        
 
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
+    }
+    
+    public void paintCursor(Graphics g){
+        Graphics2D g2d = (Graphics2D) g;
+        if (mode == mode.SELECT) {
+            g2d.drawRect(mouseTileCoords.x * GlobalConstants.tileSize, mouseTileCoords.y * GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
+            g2d.setColor(new Color(200, 20, 20, 96));
+            g2d.fillRect(mouseTileCoords.x * GlobalConstants.tileSize, mouseTileCoords.y * GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
+        }else if(mode == mode.BUILD){
+            if(buildable){
+                g2d.setColor(Color.GREEN);
+            }else{
+                g2d.setColor(Color.RED);
+            }
+            g2d.drawRect(mouseTileCoords.x * GlobalConstants.tileSize, mouseTileCoords.y * GlobalConstants.tileSize, 2*GlobalConstants.tileSize, 2*GlobalConstants.tileSize);
+            if(buildable){
+                g2d.setColor(new Color(20, 200, 20, 96));
+            }else{
+                g2d.setColor(new Color(200, 20, 20, 96));
+            }
+            g2d.fillRect(mouseTileCoords.x * GlobalConstants.tileSize, mouseTileCoords.y * GlobalConstants.tileSize, 2*GlobalConstants.tileSize, 2*GlobalConstants.tileSize);
+        }
     }
 
     @Override
@@ -111,7 +132,12 @@ public class GameInstance extends JPanel implements ActionListener {
         try {
             mouseCoords.x -= this.getLocationOnScreen().x;
             mouseCoords.y -= this.getLocationOnScreen().y;
+            mouseTileCoords.x = mouseCoords.x / GlobalConstants.tileSize;
+            mouseTileCoords.y = mouseCoords.y / GlobalConstants.tileSize;
         } catch (IllegalComponentStateException ex) {
+        }
+        if(mode == mode.BUILD){
+            checkIfBuildable(2, 2);
         }
 
         for (Tower tower : towerList) {
@@ -123,6 +149,40 @@ public class GameInstance extends JPanel implements ActionListener {
         
         credits++;
         repaint();
+    }
+    
+    public boolean mouseInsideWindow(){
+        if(mouseCoords.x < 0){
+            return false;
+        }
+        if(mouseCoords.y < 0){
+            return false;
+        }
+        if(mouseCoords.x >= this.getWidth()){
+            return false;
+        }
+        if(mouseCoords.y >= this.getHeight()){
+            return false;
+        }
+        return true;
+    }
+    
+    private void checkIfBuildable(int sizeX, int sizeY){
+        if(!mouseInsideWindow()){
+            buildable = false;
+            return;
+        }
+        for(int i = 0; i < sizeX; i++){
+            for(int j = 0; j < sizeY; j++){
+                if(map.getTile(mouseTileCoords.x + i, mouseTileCoords.y + j) == null 
+                        || !map.getTile(mouseTileCoords.x + i, mouseTileCoords.y + j).isPassable()
+                        || map.getTile(mouseTileCoords.x + i, mouseTileCoords.y + j).getEnemy() != null){
+                    buildable = false;
+                    return;
+                }
+            }
+        }
+        buildable = true;
     }
 
     private class TAdapter extends KeyAdapter {
@@ -140,9 +200,29 @@ public class GameInstance extends JPanel implements ActionListener {
             }
         }
     }
+    private class mouseInput extends MouseAdapter {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(e.getButton() == MouseEvent.BUTTON1){
+                if(mode == mode.BUILD && buildable){
+                    addTower("", mouseTileCoords.x, mouseTileCoords.y);
+                }
+            }
+        }
+        
+        
+    }
+    
 
     public void addTower(String type, int x, int y) {
         towerList.add(new Tower(x, y));
+        for(int i = 0; i < 2; i++){
+            for(int j = 0; j < 2; j++){
+                map.getTile(x+i, y+j).setPassable(false);
+            }
+        }
+        recalculatePaths();
     }
 
     public void addEnemy(int x, int y) {
@@ -150,6 +230,12 @@ public class GameInstance extends JPanel implements ActionListener {
             enemyList.add(new Enemy(map.generatePath(x, y)));
         } else {
             System.out.println("cannot place enemy");
+        }
+    }
+    
+    public void recalculatePaths(){
+        for(Enemy enemy: enemyList){
+            enemy.setPath(map.generatePath(enemy.getCurrentTile().getX(), enemy.getCurrentTile().getY()));
         }
     }
 }

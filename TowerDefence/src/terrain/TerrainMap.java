@@ -91,8 +91,8 @@ public class TerrainMap {
             }
         }
     }
-    
-    public MapTile getTile(int x, int y){
+
+    public MapTile getTile(int x, int y) {
         return navigationGraph[x][y];
     }
 
@@ -116,43 +116,43 @@ public class TerrainMap {
     public BufferedImage getMapImage() {
         return mapImage;
     }
-    
-    
 
     public LinkedList<MapTile> generatePath(int startX, int startY) {
         HashSet<MapTile> closedSet = new HashSet<MapTile>();
         PriorityQueue<Node> openSet = new PriorityQueue<Node>();
         HashMap<MapTile, Node> openSet2 = new HashMap<MapTile, Node>(); // same as openSet in a different data structure
-        
+
         //manhattan heuristic
         openSet.add(new Node(navigationGraph[startX][startY], 0, Math.abs(startX - target[0]) + Math.abs(startY - target[1]), null));
         LinkedList<MapTile> route = new LinkedList<MapTile>();
 
         while (!openSet.isEmpty()) {
             Node current = openSet.remove();
-            if(current.tile.equals(navigationGraph[target[0]][target[1]])){
-                while (current != null){
+            if (current.tile.equals(navigationGraph[target[0]][target[1]])) {
+                while (current != null) {
                     route.push(current.tile);
                     current = openSet2.get(current.prev);
                 }
                 return route;
             }
             //openSet2.remove(current.tile);
-            
+
             closedSet.add(current.tile);
-            for (MapTile tile:current.tile.neighbours.keySet()){
-                if(!closedSet.contains(tile)){
-                    double tentativeDist = current.dist + current.tile.neighbours.get(tile);
-                    double heur = Math.abs(tile.getX() - target[0]) + Math.abs(tile.getY() - target[1]);
-                    if(!openSet2.containsKey(tile) || openSet2.get(tile).dist >= tentativeDist){
-                        if(!openSet2.containsKey(tile)){
-                        Node neighbour = new Node(tile, tentativeDist, heur, current.tile);
-                        openSet.add(neighbour);
-                        openSet2.put(tile, neighbour);
-                        neighbour.prev = current.tile;
-                        }else{
-                            openSet2.get(tile).dist = tentativeDist;
-                            openSet2.get(tile).prev = current.tile;
+            for (MapTile tile : current.tile.neighbours.keySet()) {
+                if (tile.isPassable()) {
+                    if (!closedSet.contains(tile)) {
+                        double tentativeDist = current.dist + current.tile.neighbours.get(tile);
+                        double heur = Math.abs(tile.getX() - target[0]) + Math.abs(tile.getY() - target[1]);
+                        if (!openSet2.containsKey(tile) || openSet2.get(tile).dist >= tentativeDist) {
+                            if (!openSet2.containsKey(tile)) {
+                                Node neighbour = new Node(tile, tentativeDist, heur, current.tile);
+                                openSet.add(neighbour);
+                                openSet2.put(tile, neighbour);
+                                neighbour.prev = current.tile;
+                            } else {
+                                openSet2.get(tile).dist = tentativeDist;
+                                openSet2.get(tile).prev = current.tile;
+                            }
                         }
                     }
                 }
@@ -161,7 +161,6 @@ public class TerrainMap {
         return null;
 
     }
-
 
     public class Node implements Comparable<Node> {
 
@@ -190,13 +189,11 @@ public class TerrainMap {
 
         @Override
         public boolean equals(Object obj) {
-            if(obj.getClass().equals(this.getClass())){
-                Node n = (Node)obj;
+            if (obj.getClass().equals(this.getClass())) {
+                Node n = (Node) obj;
                 return n.tile == this.tile;
             }
             return false;
         }
-        
-        
     }
 }

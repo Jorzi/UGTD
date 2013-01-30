@@ -63,6 +63,12 @@ public class Enemy {
         g2d.setTransform(a);
     }
 
+    public MapTile getCurrentTile() {
+        return currentTile;
+    }
+    
+    
+
     public void setPath(LinkedList<MapTile> path) {
         this.path = path;
     }

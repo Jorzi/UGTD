@@ -39,6 +39,10 @@ public class MapTile {
         return passable;
     }
 
+    public void setPassable(Boolean passable) {
+        this.passable = passable;
+    }
+
     public void setEnemy(Enemy enemy) {
         this.enemy = enemy;
     }
