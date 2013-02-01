@@ -117,10 +117,10 @@ public class Enemy {
     }
 
     private void calculateTileOccupation() {
-        if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.75) {
+        if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.75 && path.peek().getEnemy() == null) {
             path.peek().setEnemy(this);
         }
-        if (Point2D.distance(tileX, tileY, previousTile.getX(), previousTile.getY()) > 0.75) {
+        if (Point2D.distance(tileX, tileY, previousTile.getX(), previousTile.getY()) > 0.75 && previousTile.getEnemy() == this) {
             previousTile.setEnemy(null);
         }
     }
@@ -128,9 +128,9 @@ public class Enemy {
     private void setTargetAngle() {
         double dx = -tileX + path.peek().getX();
         double dy = -tileY + path.peek().getY();
-        if(dx == 0 && dy == 0){
-            previousTile = path.peek();
-        }
+//        if(dx == 0 && dy == 0){
+//            previousTile = path.peek();
+//        }
         targetAngle = Math.atan2(dy, dx);
         targetAngle %= 2 * Math.PI;
 
