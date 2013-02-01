@@ -8,6 +8,7 @@ import game.GlobalConstants;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
@@ -24,17 +25,15 @@ public class Enemy {
 
     private int centerX = 8;
     private int centerY = 8;
-    private double x;
-    private double y;
+    private double tileX;
+    private double tileY;
     private double angle;
     private double targetAngle;
     private double da = 0.05;
-    private double tileProgress;
-    private double invDistFac;
     private double speed; // tiles/frame, keep this between 0 and 1
     private BufferedImage image;
     private LinkedList<MapTile> path; // stack of tiles left to traverse
-    private MapTile currentTile;
+    private MapTile previousTile;
     private boolean arrived;
 
     public Enemy(LinkedList<MapTile> path) {
@@ -44,8 +43,9 @@ public class Enemy {
             System.out.println("couldn't find image");
         }
         this.path = path;
-        currentTile = this.path.pop();
-        tileProgress = 0;
+        previousTile = this.path.pop();
+        tileX = previousTile.getX();
+        tileY = previousTile.getY();
         speed = 0.02;
         setTargetAngle();
         angle = targetAngle;
@@ -55,7 +55,7 @@ public class Enemy {
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform a = g2d.getTransform();
-        g2d.translate(x, y);
+        g2d.translate(tileX * GlobalConstants.tileSize, tileY * GlobalConstants.tileSize);
         g2d.translate(centerX, centerY);
         g2d.rotate(angle + Math.PI * 0.5);
         g2d.translate(-centerX, -centerY);
@@ -64,39 +64,33 @@ public class Enemy {
     }
 
     public MapTile getCurrentTile() {
-        return currentTile;
+        return previousTile;
     }
-    
-    
 
     public void setPath(LinkedList<MapTile> path) {
         this.path = path;
+        setTargetAngle(); //recalculate angle in case target tile is changed
     }
 
     public void update() {
         move();
         if (!arrived) {
-            x = (currentTile.getX() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getX() * GlobalConstants.tileSize) * tileProgress;
-            y = (currentTile.getY() * GlobalConstants.tileSize) * (1 - tileProgress) + (path.peek().getY() * GlobalConstants.tileSize) * tileProgress;
-        }
+            calculateTileOccupation();
+        } 
     }
 
     private void move() {
         if (!arrived) {
-            if (tileProgress >= 1) {
-                if (path.peek().getEnemy() == null) {
-                    currentTile.setEnemy(null);
-                    currentTile = path.pop();
-                    if (path.isEmpty()) {
-                        arrived = true;
-                        return;
-                    }
-                    currentTile.setEnemy(this);
-                    setTargetAngle();
-                    tileProgress = 0;
-                } else {
+            if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < speed) {
+                tileX = path.peek().getX();
+                tileY = path.peek().getY();
+                previousTile = path.pop();
+                if (path.isEmpty()) {
+                    arrived = true;
+                    previousTile.setEnemy(null);
                     return;
                 }
+                setTargetAngle();
             }
             if (angle != targetAngle) {
                 double angleDifference = angle - targetAngle;
@@ -115,45 +109,34 @@ public class Enemy {
                     angle -= da;
                     angle %= 2 * Math.PI;
                 }
-            } else {
-                tileProgress += speed * invDistFac;
+            } else if (path.peek().getEnemy() == null || path.peek().getEnemy() == this) {
+                tileX += speed * Math.cos(angle);
+                tileY += speed * Math.sin(angle);
             }
         }
     }
 
-    private void setTargetAngle() {
-        int dx = -currentTile.getX() + path.peek().getX();
-        int dy = -currentTile.getY() + path.peek().getY();
-        if (dx == 1 && dy == 0) {
-            targetAngle = 0;
-            invDistFac = 1.0;
-        } else if (dx == 1 && dy == 1) {
-            targetAngle = Math.PI * 0.25;
-            invDistFac = 1.0 / Math.sqrt(2);
-        } else if (dx == 0 && dy == 1) {
-            targetAngle = Math.PI * 0.5;
-            invDistFac = 1.0;
-        } else if (dx == -1 && dy == 1) {
-            targetAngle = Math.PI * 0.75;
-            invDistFac = 1.0 / Math.sqrt(2);
-        } else if (dx == -1 && dy == 0) {
-            targetAngle = Math.PI;
-            invDistFac = 1.0;
-        } else if (dx == -1 && dy == -1) {
-            targetAngle = Math.PI * 1.25;
-            invDistFac = 1.0 / Math.sqrt(2);
-        } else if (dx == 0 && dy == -1) {
-            targetAngle = Math.PI * 1.5;
-            invDistFac = 1.0;
-        } else if (dx == 1 && dy == -1) {
-            targetAngle = Math.PI * 1.75;
-            invDistFac = 1.0 / Math.sqrt(2);
+    private void calculateTileOccupation() {
+        if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.75) {
+            path.peek().setEnemy(this);
         }
+        if (Point2D.distance(tileX, tileY, previousTile.getX(), previousTile.getY()) > 0.75) {
+            previousTile.setEnemy(null);
+        }
+    }
+
+    private void setTargetAngle() {
+        double dx = -tileX + path.peek().getX();
+        double dy = -tileY + path.peek().getY();
+        if(dx == 0 && dy == 0){
+            previousTile = path.peek();
+        }
+        targetAngle = Math.atan2(dy, dx);
+        targetAngle %= 2 * Math.PI;
 
     }
 
     public boolean isArrived() {
         return arrived;
     }
-    
 }
