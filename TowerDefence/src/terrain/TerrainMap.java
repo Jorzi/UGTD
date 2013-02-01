@@ -5,6 +5,7 @@
 package terrain;
 
 import game.GlobalConstants;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -102,6 +103,10 @@ public class TerrainMap {
             for (int j = 0; j < pixels[0].length; j++) {
                 if (pixels[i][j] == 0) {
                     g2d.drawImage(tile1, GlobalConstants.tileSize * i, GlobalConstants.tileSize * j, imOb);
+                    if(getTile(i, j).getEnemy() != null){
+                        g2d.setColor(new Color(200, 20, 20, 64));
+                        g2d.fillRect(i*GlobalConstants.tileSize, j*GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
+                    }
                 } else {
                     g2d.drawImage(tile2, GlobalConstants.tileSize * i, GlobalConstants.tileSize * j, imOb);
                 }

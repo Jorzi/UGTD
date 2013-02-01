@@ -5,6 +5,7 @@
 package units;
 
 import game.GlobalConstants;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -54,6 +55,16 @@ public class Enemy {
 
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
+        
+//        try{
+//        g2d.setColor(new Color(20, 200, 20, 64));
+//        g2d.fillRect(path.peek().getX()*GlobalConstants.tileSize, path.peek().getY()*GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
+//        g2d.setColor(new Color(20, 20, 200, 64));
+//        g2d.fillRect(previousTile.getX()*GlobalConstants.tileSize, previousTile.getY()*GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
+//        }catch(NullPointerException e){
+//            
+//        }
+        
         AffineTransform a = g2d.getTransform();
         g2d.translate(tileX * GlobalConstants.tileSize, tileY * GlobalConstants.tileSize);
         g2d.translate(centerX, centerY);
@@ -68,6 +79,12 @@ public class Enemy {
     }
 
     public void setPath(LinkedList<MapTile> path) {
+        if(path.peek().getEnemy() == this){
+            path.peek().setEnemy(null);
+        }
+        if(previousTile.getEnemy() == this){
+            previousTile.setEnemy(null);
+        }
         this.path = path;
         setTargetAngle(); //recalculate angle in case target tile is changed
     }
@@ -84,6 +101,7 @@ public class Enemy {
             if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < speed) {
                 tileX = path.peek().getX();
                 tileY = path.peek().getY();
+                previousTile.setEnemy(null);
                 previousTile = path.pop();
                 if (path.isEmpty()) {
                     arrived = true;
@@ -117,10 +135,10 @@ public class Enemy {
     }
 
     private void calculateTileOccupation() {
-        if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.75 && path.peek().getEnemy() == null) {
+        if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.7 && path.peek().getEnemy() == null) {
             path.peek().setEnemy(this);
         }
-        if (Point2D.distance(tileX, tileY, previousTile.getX(), previousTile.getY()) > 0.75 && previousTile.getEnemy() == this) {
+        if (Point2D.distance(tileX, tileY, previousTile.getX(), previousTile.getY()) > 0.7 && previousTile.getEnemy() == this) {
             previousTile.setEnemy(null);
         }
     }
@@ -128,9 +146,6 @@ public class Enemy {
     private void setTargetAngle() {
         double dx = -tileX + path.peek().getX();
         double dy = -tileY + path.peek().getY();
-//        if(dx == 0 && dy == 0){
-//            previousTile = path.peek();
-//        }
         targetAngle = Math.atan2(dy, dx);
         targetAngle %= 2 * Math.PI;
 

@@ -142,8 +142,8 @@ public class GameInstance extends JPanel implements ActionListener {
         for (Tower tower : towerList) {
             tower.update();
         }
-        for (Enemy enemy : enemyList) {
-            enemy.update();
+        for (int i = 0; i < enemyList.size(); i++) {
+            enemyList.get(i).update();
         }
 
         credits++;
