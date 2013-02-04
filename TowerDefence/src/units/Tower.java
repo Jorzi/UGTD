@@ -54,6 +54,16 @@ public class Tower {
         g2d.translate(-centerX, -centerY);
         g2d.drawImage(turretImage, 0, 0, imOb);
         g2d.setTransform(a);
-
     }
+
+
+    public int getTileX() {
+        return tileX;
+    }
+
+    public int getTileY() {
+        return tileY;
+    }
+    
+    
 }

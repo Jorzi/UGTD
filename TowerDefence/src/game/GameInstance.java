@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -46,7 +47,7 @@ public class GameInstance extends JPanel implements ActionListener {
     private Point mouseCoords;
     private Point mouseTileCoords = new Point();
     public TerrainMap map;
-    public List<Tower> towerList;
+    public HashSet<Tower> towerList;
     public List<Enemy> enemyList;
     private boolean buildable;
 
@@ -60,7 +61,7 @@ public class GameInstance extends JPanel implements ActionListener {
         mode = mode.SELECT;
         map = new TerrainMap(mapName);
         random = new Random();
-        towerList = new ArrayList<>();
+        towerList = new HashSet<>();
         enemyList = new ArrayList<>();
 
         addEnemy(47, 19);
@@ -165,7 +166,6 @@ public class GameInstance extends JPanel implements ActionListener {
 //        }
 //        return true;
 //    }
-
     private void checkIfBuildable(int sizeX, int sizeY) {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
@@ -204,23 +204,42 @@ public class GameInstance extends JPanel implements ActionListener {
     private class mouseInput extends MouseAdapter {
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 if (mode == mode.BUILD && buildable) {
                     addTower("", mouseTileCoords.x, mouseTileCoords.y);
+                } else if (mode == mode.SELL) {
+                    sellTower(mouseTileCoords.x, mouseTileCoords.y);
                 }
             }
         }
     }
 
     public void addTower(String type, int x, int y) {
-        towerList.add(new Tower(x, y));
+        Tower t = new Tower(x, y);
+        towerList.add(t);
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 map.getTile(x + i, y + j).setPassable(false);
+                map.getTile(x + i, y + j).setTower(t);
             }
         }
         recalculatePaths();
+    }
+
+    public void sellTower(int x, int y) {
+        if (map.getTile(x, y).getTower() != null) {
+            Tower t = map.getTile(x, y).getTower();
+            towerList.remove(t);
+            //TODO: add money handling
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 2; j++) {
+                    map.getTile(t.getTileX() + i, t.getTileY() + j).setPassable(true);
+                    map.getTile(t.getTileX() + i, t.getTileY() + j).setTower(null);
+                }
+            }
+            recalculatePaths();
+        }
     }
 
     public void addEnemy(int x, int y) {

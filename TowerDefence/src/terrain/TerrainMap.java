@@ -28,6 +28,7 @@ public class TerrainMap {
     private BufferedImage mapImage;
     private BufferedImage tile1;
     private BufferedImage tile2;
+    private BufferedImage bunker;
     private int[][] pixels; // tile index array
     private MapTile[][] navigationGraph;
 
@@ -46,6 +47,7 @@ public class TerrainMap {
             mapImage = ImageIO.read(new File(mapName));
             tile1 = ImageIO.read(new File("ground1.png")); //TODO: unhardcode tileset
             tile2 = ImageIO.read(new File("rock1.png"));
+            bunker = ImageIO.read(new File("bunker1.png"));
         } catch (IOException e) {
             System.out.println("couldn't find image");
         }
@@ -112,6 +114,7 @@ public class TerrainMap {
                 }
             }
         }
+        g2d.drawImage(bunker, GlobalConstants.tileSize*target[0] - 16, GlobalConstants.tileSize*target[1] - 16, imOb);
     }
 
     public int[][] getPixels() {

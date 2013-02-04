@@ -50,6 +50,17 @@ public class MapTile {
     public Enemy getEnemy() {
         return enemy;
     }
+
+    public Tower getTower() {
+        return tower;
+    }
+
+    public void setTower(Tower tower) {
+        this.tower = tower;
+    }
+    
+    
+    
     
     
     
