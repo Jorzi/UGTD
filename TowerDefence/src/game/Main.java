@@ -19,7 +19,7 @@ public class Main extends JFrame {
 
     public Main() {
 
-        
+        // not currently used, possibly used as main menu in the future
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

@@ -145,6 +145,11 @@ public class GameInstance extends JPanel implements ActionListener {
         }
         for (int i = 0; i < enemyList.size(); i++) {
             enemyList.get(i).update();
+            if(enemyList.get(i).isArrived()){
+                //TODO: add damage calculation
+                enemyList.remove(i);
+                i--;
+            }
         }
 
         credits++;
