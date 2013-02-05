@@ -19,8 +19,8 @@ import java.util.PriorityQueue;
 import javax.imageio.ImageIO;
 
 /**
- *
- * @author Göran
+ * Responsible for creating and drawing the map object, as well as accessing MapTiles and pathfinding
+ * @author Göran Maconi
  */
 public class TerrainMap {
 
@@ -126,13 +126,13 @@ public class TerrainMap {
     }
 
     public LinkedList<MapTile> generatePath(int startX, int startY) {
-        HashSet<MapTile> closedSet = new HashSet<MapTile>();
-        PriorityQueue<Node> openSet = new PriorityQueue<Node>();
-        HashMap<MapTile, Node> openSet2 = new HashMap<MapTile, Node>(); // same as openSet in a different data structure
+        HashSet<MapTile> closedSet = new HashSet<>();
+        PriorityQueue<Node> openSet = new PriorityQueue<>();
+        HashMap<MapTile, Node> openSet2 = new HashMap<>(); // same as openSet in a different data structure
 
         //manhattan heuristic
         openSet.add(new Node(navigationGraph[startX][startY], 0, Math.abs(startX - target[0]) + Math.abs(startY - target[1]), null));
-        LinkedList<MapTile> route = new LinkedList<MapTile>();
+        LinkedList<MapTile> route = new LinkedList<>();
 
         while (!openSet.isEmpty()) {
             Node current = openSet.remove();

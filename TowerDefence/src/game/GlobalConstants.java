@@ -5,8 +5,9 @@
 package game;
 
 /**
+ * Contains values which might be useful to store centrally for easier modification
  *
- * @author Göran
+ * @author Göran Maconi
  */
 public class GlobalConstants {
     

@@ -17,8 +17,9 @@ import javax.imageio.ImageIO;
 import terrain.MapTile;
 
 /**
- *
- * @author Göran
+ *  The tower tracks and shoots at enemies within its active area.
+ * 
+ * @author Göran Maconi
  */
 public class Tower {
 

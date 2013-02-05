@@ -9,8 +9,8 @@ import java.util.Comparator;
 import terrain.MapTile;
 
 /**
- *
- * @author maconi
+ * Used for sorting the list in a tower's guard area according to its distance to the tower.
+ * @author Göran Maconi
  */
 public class TileRangeComparator implements Comparator<MapTile> {
     

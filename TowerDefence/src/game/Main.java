@@ -9,8 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- *
- * @author Göran
+ * Not currently used, possibly used as main menu in the future
+ * @author Göran Maconi
  */
 public class Main extends JFrame {
 
@@ -18,8 +18,6 @@ public class Main extends JFrame {
     private JPanel game;
 
     public Main() {
-
-        // not currently used, possibly used as main menu in the future
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

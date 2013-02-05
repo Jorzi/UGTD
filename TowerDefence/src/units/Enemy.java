@@ -19,8 +19,10 @@ import javax.imageio.ImageIO;
 import terrain.MapTile;
 
 /**
+ * The sole objective of the enemy class, except for drawing its own graphical representation, is to follow the path it is given.
+ * Once it reaches the end of the path, its "arrived" status becomes true.
  *
- * @author Göran
+ * @author Göran Maconi
  */
 public class Enemy {
 

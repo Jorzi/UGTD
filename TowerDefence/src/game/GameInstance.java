@@ -36,7 +36,11 @@ import units.Tower;
 
 /**
  *
- * @author Göran
+ * This is the central class of all game logic. It contains the game loop and draws all objects.
+ * It also handles adding and removing of buildings and enemies.
+ * 
+ * 
+ * @author Göran Maconi
  */
 public class GameInstance extends JPanel implements ActionListener {
 
