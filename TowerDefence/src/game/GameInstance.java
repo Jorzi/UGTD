@@ -17,7 +17,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +31,7 @@ import javax.swing.Timer;
 import terrain.MapTile;
 import terrain.TerrainMap;
 import units.Enemy;
+import units.TileRangeComparator;
 import units.Tower;
 
 /**
@@ -220,8 +224,24 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
+    private ArrayList<MapTile> CalculateTowerRange(int x, int y, int radius) {
+        ArrayList<MapTile> area = new ArrayList<>();
+        Comparator<MapTile> compareDistance = new TileRangeComparator(x + 0.5, y + 0.5);
+        for (int i = Math.max(x - radius, 0); i < Math.min( x + radius + 2, map.getPixels().length); i++) {
+            for (int j = Math.max(y - radius, 0); j < Math.min(y + radius + 2, map.getPixels()[0].length); j++) {
+                if (map.getTile(i, j) != null) {
+                    if (Point2D.distance(x + 0.5, y + 0.5, map.getTile(i, j).getX(), map.getTile(i, j).getY()) <= radius) {
+                        area.add(map.getTile(i, j));
+                    }
+                }
+            }
+        }
+        Collections.sort(area, compareDistance);
+        return area;
+    }
+
     public void addTower(String type, int x, int y) {
-        Tower t = new Tower(x, y);
+        Tower t = new Tower(x, y, CalculateTowerRange(x, y, 5));
         towerList.add(t);
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
