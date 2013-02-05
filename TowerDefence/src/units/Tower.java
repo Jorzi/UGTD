@@ -12,7 +12,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
+import terrain.MapTile;
 
 /**
  *
@@ -28,10 +30,13 @@ public class Tower {
     private double da = 0.01;
     private BufferedImage turretImage;
     private BufferedImage baseImage;
+    
+    private ArrayList<MapTile> activeArea;
 
-    public Tower(int tileX, int tileY) {
+    public Tower(int tileX, int tileY, ArrayList<MapTile> activeArea) {
         this.tileX = tileX;
         this.tileY = tileY;
+        this.activeArea = activeArea;
         try {
             baseImage = ImageIO.read(new File("turretbase1.png"));
             turretImage = ImageIO.read(new File("turret1.png"));

@@ -20,6 +20,8 @@ import static org.junit.Assert.*;
  */
 public class GameInstanceTest {
     
+    GameInstance game;
+    
     public GameInstanceTest() {
     }
     
@@ -33,7 +35,7 @@ public class GameInstanceTest {
     
     @Before
     public void setUp() {
-        
+        game = new GameInstance("map2.png");
     }
     
     @After
@@ -44,7 +46,7 @@ public class GameInstanceTest {
     //
     @Test
     public void gameInstanceInitialisation() {
-        GameInstance game = new GameInstance("map2.png");
+        
         assertTrue(game.map != null);
         assertTrue(game.enemyList != null);
         assertTrue(game.towerList != null);
@@ -52,7 +54,6 @@ public class GameInstanceTest {
     
     @Test
     public void enemyGetsAdded() {
-        GameInstance game = new GameInstance("map2.png");
         int size = game.enemyList.size();
         game.addEnemy(47, 10);
         assertEquals(size + 1, game.enemyList.size());
@@ -60,7 +61,6 @@ public class GameInstanceTest {
     
     @Test
     public void enemyNotAddedOnRock() {
-        GameInstance game = new GameInstance("map2.png");
         int size = game.enemyList.size();
         game.addEnemy(0, 0);
         assertEquals(size, game.enemyList.size());
@@ -68,7 +68,6 @@ public class GameInstanceTest {
     
     @Test
     public void towerGetsAdded() {
-        GameInstance game = new GameInstance("map2.png");
         int size = game.towerList.size();
         game.addTower("", 16, 16);
         assertEquals(size + 1, game.towerList.size());

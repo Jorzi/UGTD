@@ -44,6 +44,7 @@ public class Enemy {
             System.out.println("couldn't find image");
         }
         this.path = path;
+        path.peek().setEnemy(this);
         previousTile = this.path.pop();
         tileX = previousTile.getX();
         tileY = previousTile.getY();
@@ -55,7 +56,7 @@ public class Enemy {
 
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
-        
+
 //        try{
 //        g2d.setColor(new Color(20, 200, 20, 64));
 //        g2d.fillRect(path.peek().getX()*GlobalConstants.tileSize, path.peek().getY()*GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
@@ -64,7 +65,7 @@ public class Enemy {
 //        }catch(NullPointerException e){
 //            
 //        }
-        
+
         AffineTransform a = g2d.getTransform();
         g2d.translate(tileX * GlobalConstants.tileSize, tileY * GlobalConstants.tileSize);
         g2d.translate(centerX, centerY);
@@ -79,12 +80,6 @@ public class Enemy {
     }
 
     public void setPath(LinkedList<MapTile> path) {
-        if(path.peek().getEnemy() == this){
-            path.peek().setEnemy(null);
-        }
-        if(previousTile.getEnemy() == this){
-            previousTile.setEnemy(null);
-        }
         this.path = path;
         setTargetAngle(); //recalculate angle in case target tile is changed
     }
@@ -93,7 +88,7 @@ public class Enemy {
         move();
         if (!arrived) {
             calculateTileOccupation();
-        } 
+        }
     }
 
     private void move() {
@@ -101,7 +96,9 @@ public class Enemy {
             if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < speed) {
                 tileX = path.peek().getX();
                 tileY = path.peek().getY();
-                previousTile.setEnemy(null);
+                if (previousTile.getEnemy() == this) {
+                    previousTile.setEnemy(null);
+                }
                 previousTile = path.pop();
                 if (path.isEmpty()) {
                     arrived = true;
@@ -130,15 +127,18 @@ public class Enemy {
             } else if (path.peek().getEnemy() == null || path.peek().getEnemy() == this) {
                 tileX += speed * Math.cos(angle);
                 tileY += speed * Math.sin(angle);
+            } else if (Point2D.distance(path.peek().getEnemy().getTileX(), path.peek().getEnemy().getTileY(), path.peek().getX(), path.peek().getY()) > 1){
+                // UGLY WORKAROUND FOR A BUG, compensates for insufficient tile occupation removal
+                path.peek().setEnemy(this);
             }
         }
     }
 
     private void calculateTileOccupation() {
-        if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.7 && path.peek().getEnemy() == null) {
+        if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.9 && path.peek().getEnemy() == null) {
             path.peek().setEnemy(this);
         }
-        if (Point2D.distance(tileX, tileY, previousTile.getX(), previousTile.getY()) > 0.7 && previousTile.getEnemy() == this) {
+        if (Point2D.distance(tileX, tileY, previousTile.getX(), previousTile.getY()) > 0.9 && previousTile.getEnemy() == this) {
             previousTile.setEnemy(null);
         }
     }
@@ -154,4 +154,14 @@ public class Enemy {
     public boolean isArrived() {
         return arrived;
     }
+
+    public double getTileX() {
+        return tileX;
+    }
+
+    public double getTileY() {
+        return tileY;
+    }
+    
+    
 }
