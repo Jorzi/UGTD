@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import javax.imageio.ImageIO;
+import units.Enemy;
 
 /**
  * Responsible for creating and drawing the map object, as well as accessing MapTiles and pathfinding
@@ -168,6 +169,16 @@ public class TerrainMap {
         }
         return null;
 
+    }
+    
+    public void clearEnemy(Enemy e){
+        for(MapTile[] tileRow : navigationGraph){
+            for(MapTile tile : tileRow){
+                if(tile != null && tile.getEnemy() == e){
+                    tile.setEnemy(null);
+                }
+            }
+        }
     }
 
     public class Node implements Comparable<Node> {

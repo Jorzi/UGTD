@@ -102,6 +102,9 @@ public class GameInstance extends JPanel implements ActionListener {
             enemy.paint(g, this);
         }
         for (Tower tower : towerList) {
+            tower.paintProjectiles(g, this);
+        }
+        for (Tower tower : towerList) {
             tower.paintTurret(g, this);
         }
 
@@ -156,8 +159,9 @@ public class GameInstance extends JPanel implements ActionListener {
         }
         for (int i = 0; i < enemyList.size(); i++) {
             enemyList.get(i).update();
-            if(enemyList.get(i).isArrived()){
+            if(enemyList.get(i).isArrived() || enemyList.get(i).isDestroyed()){
                 //TODO: add damage calculation
+                map.clearEnemy(enemyList.get(i));
                 enemyList.remove(i);
                 i--;
             }
@@ -248,7 +252,7 @@ public class GameInstance extends JPanel implements ActionListener {
     }
 
     public void addTower(String type, int x, int y) {
-        Tower t = new Tower(x, y, CalculateTowerRange(x, y, 5));
+        Tower t = new Tower(x, y, CalculateTowerRange(x, y, 7), 7);
         towerList.add(t);
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
