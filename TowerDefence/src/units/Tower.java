@@ -50,11 +50,18 @@ public class Tower {
         angle += da;
     }
 
-    public void paint(Graphics g, ImageObserver imOb) {
+    public void paintBase(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform a = g2d.getTransform();
         g2d.translate(tileX * GlobalConstants.tileSize, tileY * GlobalConstants.tileSize);
         g2d.drawImage(baseImage, 0, 0, imOb);
+        g2d.setTransform(a);
+    }
+    
+    public void paintTurret(Graphics g, ImageObserver imOb) {
+        Graphics2D g2d = (Graphics2D) g;
+        AffineTransform a = g2d.getTransform();
+        g2d.translate(tileX * GlobalConstants.tileSize, tileY * GlobalConstants.tileSize);
         g2d.translate(centerX, centerX); //hack takes into account the varying heights(->positions) of the images
         g2d.rotate(angle);
         g2d.translate(-centerX, -centerY);

@@ -20,6 +20,9 @@ import terrain.TerrainMap;
  */
 public class EnemyTest {
     
+    TerrainMap map;
+    LinkedList<MapTile> path;
+    
     public EnemyTest() {
     }
     
@@ -33,6 +36,8 @@ public class EnemyTest {
     
     @Before
     public void setUp() {
+        map = new TerrainMap("map2.png");
+        path = new LinkedList<>();
     }
     
     @After
@@ -43,8 +48,6 @@ public class EnemyTest {
     //
      @Test
      public void notArrivedByDefault() {
-         TerrainMap map = new TerrainMap("map2.png");
-         LinkedList<MapTile> path = new LinkedList<>();
          path.add(map.getTile(TerrainMap.target[0], TerrainMap.target[1]));
          path.push(map.getTile(TerrainMap.target[0] + 1, TerrainMap.target[1]));
          Enemy enemy = new Enemy(path);
@@ -54,8 +57,6 @@ public class EnemyTest {
      
      @Test
      public void waitsAtGoalAfterArriving(){
-         TerrainMap map = new TerrainMap("map2.png");
-         LinkedList<MapTile> path = new LinkedList<>();
          path.add(map.getTile(TerrainMap.target[0], TerrainMap.target[1]));
          path.push(map.getTile(TerrainMap.target[0] + 1, TerrainMap.target[1]));
          Enemy enemy = new Enemy(path);

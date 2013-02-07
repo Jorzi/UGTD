@@ -96,7 +96,25 @@ public class Enemy {
     private void move() {
         if (!arrived) {
             if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < speed) {
-                tileX = path.peek().getX();
+                nextTile();
+                if(arrived){
+                    return;
+                }
+            }
+            if (angle != targetAngle) {
+                turnTowardsTargetAngle();
+            } else if (path.peek().getEnemy() == null || path.peek().getEnemy() == this) {
+                tileX += speed * Math.cos(angle);
+                tileY += speed * Math.sin(angle);
+            } else if (Point2D.distance(path.peek().getEnemy().getTileX(), path.peek().getEnemy().getTileY(), path.peek().getX(), path.peek().getY()) > 1){
+                // UGLY WORKAROUND FOR A BUG, compensates for insufficient tile occupation removal
+                path.peek().setEnemy(this);
+            }
+        }
+    }
+    
+    private void nextTile(){
+        tileX = path.peek().getX();
                 tileY = path.peek().getY();
                 if (previousTile.getEnemy() == this) {
                     previousTile.setEnemy(null);
@@ -108,9 +126,10 @@ public class Enemy {
                     return;
                 }
                 setTargetAngle();
-            }
-            if (angle != targetAngle) {
-                double angleDifference = angle - targetAngle;
+    }
+    
+    private void turnTowardsTargetAngle(){
+        double angleDifference = angle - targetAngle;
                 if (Math.min(Math.abs(angleDifference), 2 * Math.PI - Math.abs(angleDifference)) < da) {
                     angle = targetAngle;
                 } else if (angleDifference > Math.PI) {
@@ -126,14 +145,6 @@ public class Enemy {
                     angle -= da;
                     angle %= 2 * Math.PI;
                 }
-            } else if (path.peek().getEnemy() == null || path.peek().getEnemy() == this) {
-                tileX += speed * Math.cos(angle);
-                tileY += speed * Math.sin(angle);
-            } else if (Point2D.distance(path.peek().getEnemy().getTileX(), path.peek().getEnemy().getTileY(), path.peek().getX(), path.peek().getY()) > 1){
-                // UGLY WORKAROUND FOR A BUG, compensates for insufficient tile occupation removal
-                path.peek().setEnemy(this);
-            }
-        }
     }
 
     private void calculateTileOccupation() {

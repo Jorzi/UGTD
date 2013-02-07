@@ -96,10 +96,13 @@ public class GameInstance extends JPanel implements ActionListener {
         map.paint(g, this);
 
         for (Tower tower : towerList) {
-            tower.paint(g, this);
+            tower.paintBase(g, this);
         }
         for (Enemy enemy : enemyList) {
             enemy.paint(g, this);
+        }
+        for (Tower tower : towerList) {
+            tower.paintTurret(g, this);
         }
 
         Graphics2D g2d = (Graphics2D) g;

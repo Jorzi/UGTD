@@ -69,7 +69,7 @@ public class GameInstanceTest {
     @Test
     public void towerGetsAdded() {
         int size = game.towerList.size();
-        game.addTower("", 16, 16);
+        game.addTower("", 7, 7);
         assertEquals(size + 1, game.towerList.size());
     }
 }
