@@ -37,7 +37,10 @@ public class Enemy {
     private BufferedImage image;
     private LinkedList<MapTile> path; // stack of tiles left to traverse
     private MapTile previousTile;
+    
     private boolean arrived;
+    private boolean destroyed;
+    private int hp = 100;
 
     public Enemy(LinkedList<MapTile> path) {
         try {
@@ -54,6 +57,7 @@ public class Enemy {
         setTargetAngle();
         angle = targetAngle;
         arrived = false;
+        destroyed = false;
     }
 
     public void paint(Graphics g, ImageObserver imOb) {
@@ -168,6 +172,10 @@ public class Enemy {
         return arrived;
     }
 
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
     public double getTileX() {
         return tileX;
     }
@@ -176,5 +184,11 @@ public class Enemy {
         return tileY;
     }
     
-    
+    public void takeDamage(int amount){
+        hp -= amount;
+        if(hp <= 0){
+            hp = 0;
+            destroyed = true;
+        }
+    }
 }
