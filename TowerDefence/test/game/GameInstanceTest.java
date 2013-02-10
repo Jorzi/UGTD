@@ -35,7 +35,7 @@ public class GameInstanceTest {
     
     @Before
     public void setUp() {
-        game = new GameInstance("map2.png");
+        game = new GameInstance("map2.png", 100);
     }
     
     @After

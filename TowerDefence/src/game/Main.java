@@ -14,8 +14,6 @@ import javax.swing.JPanel;
  */
 public class Main extends JFrame {
 
-    private JButton b;
-    private JPanel game;
 
     public Main() {
 

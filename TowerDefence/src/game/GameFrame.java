@@ -6,7 +6,7 @@ package game;
 
 /**
  *
- * @author Göran
+ * @author Göran Maconi
  */
 public class GameFrame extends javax.swing.JFrame {
     

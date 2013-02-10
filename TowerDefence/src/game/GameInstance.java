@@ -60,6 +60,10 @@ public class GameInstance extends JPanel implements ActionListener {
     public List<Enemy> enemyList;
     private boolean buildable;
 
+    /**
+     * @param mapName the filename of the map image
+     * @param startCredits amount of money available at the start of the game
+     */
     public GameInstance(String mapName, int startCredits) {
 
         addKeyListener(new TAdapter());
@@ -87,10 +91,6 @@ public class GameInstance extends JPanel implements ActionListener {
 
         timer = new Timer(10, this);
         timer.start();
-    }
-
-    public static void setMode(mode mode) {
-        GameInstance.mode = mode;
     }
 
     @Override
@@ -121,7 +121,10 @@ public class GameInstance extends JPanel implements ActionListener {
         g.dispose();
     }
 
-    public void paintCursor(Graphics g) {
+    /**
+     * A sub-method to the paint method which highlights the tile beneath the cursor.
+     */
+    private void paintCursor(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         if (mode == mode.SELECT) {
             g2d.drawRect(mouseTileCoords.x * GlobalConstants.tileSize, mouseTileCoords.y * GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
@@ -145,6 +148,14 @@ public class GameInstance extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        update();
+        repaint();
+    }
+    
+    /**
+     * Called every game tick. Progresses the game further.
+     */
+    public void update(){
         mouseCoords = MouseInfo.getPointerInfo().getLocation();
         try {
             mouseCoords.x -= this.getLocationOnScreen().x;
@@ -161,10 +172,13 @@ public class GameInstance extends JPanel implements ActionListener {
             tower.update();
         }
         updateEnemies();
-        repaint();
     }
 
-    public void updateEnemies() {
+    /**
+     * sub-method of update. Calls the updates method of all enemies.
+     * Also handles removal of destroyed/arrived enemies
+     */
+    private void updateEnemies() {
         for (int i = 0; i < enemyList.size(); i++) {
             enemyList.get(i).update();
             if (enemyList.get(i).isArrived() || enemyList.get(i).isDestroyed()) {
@@ -180,21 +194,7 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
-//    public boolean mouseInsideWindow() {
-//        if (mouseCoords.x < 0) {
-//            return false;
-//        }
-//        if (mouseCoords.y < 0) {
-//            return false;
-//        }
-//        if (mouseCoords.x >= this.getWidth()) {
-//            return false;
-//        }
-//        if (mouseCoords.y >= this.getHeight()) {
-//            return false;
-//        }
-//        return true;
-//    }
+
     /**
      * Method to check if there's enough free area under the mouse to be able to
      * place a tower of size x * y
@@ -221,6 +221,9 @@ public class GameInstance extends JPanel implements ActionListener {
         buildable = true;
     }
 
+    /**
+     * Used for reading key input.
+     */
     private class TAdapter extends KeyAdapter {
 
         @Override
@@ -237,6 +240,9 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Used for reading mouse input.
+     */
     private class mouseInput extends MouseAdapter {
 
         @Override
@@ -310,5 +316,9 @@ public class GameInstance extends JPanel implements ActionListener {
         for (Enemy enemy : enemyList) {
             enemy.setPath(map.generatePath(enemy.getCurrentTile().getX(), enemy.getCurrentTile().getY()));
         }
+    }
+
+    public static void setMode(mode mode) {
+        GameInstance.mode = mode;
     }
 }

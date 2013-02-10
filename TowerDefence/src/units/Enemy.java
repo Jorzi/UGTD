@@ -19,8 +19,9 @@ import javax.imageio.ImageIO;
 import terrain.MapTile;
 
 /**
- * The sole objective of the enemy class, except for drawing its own graphical representation, is to follow the path it is given.
- * Once it reaches the end of the path, its "arrived" status becomes true.
+ * The sole objective of the enemy class, except for drawing its own graphical
+ * representation, is to follow the path it is given. Once it reaches the end of
+ * the path, its "arrived" status becomes true.
  *
  * @author Göran Maconi
  */
@@ -37,12 +38,16 @@ public class Enemy {
     private BufferedImage image;
     private LinkedList<MapTile> path; // stack of tiles left to traverse
     private MapTile previousTile;
-    
     private boolean arrived;
     private boolean destroyed;
     private int hp = 100;
     private int value = 20;
 
+    /**
+     *
+     * @param path The tile stack which the enemy uses to navigate. When the
+     * stack is empty, the enemy has accomplished its mission.
+     */
     public Enemy(LinkedList<MapTile> path) {
         try {
             image = ImageIO.read(new File("tank1.png"));
@@ -55,7 +60,7 @@ public class Enemy {
         tileX = previousTile.getX();
         tileY = previousTile.getY();
         speed = 0.02;
-        setTargetAngle();
+        calculateTargetAngle();
         angle = targetAngle;
         arrived = false;
         destroyed = false;
@@ -72,7 +77,6 @@ public class Enemy {
 //        }catch(NullPointerException e){
 //            
 //        }
-
         AffineTransform a = g2d.getTransform();
         g2d.translate(tileX * GlobalConstants.tileSize, tileY * GlobalConstants.tileSize);
         g2d.translate(centerX, centerY);
@@ -82,15 +86,9 @@ public class Enemy {
         g2d.setTransform(a);
     }
 
-    public MapTile getCurrentTile() {
-        return previousTile;
-    }
-
-    public void setPath(LinkedList<MapTile> path) {
-        this.path = path;
-        setTargetAngle(); //recalculate angle in case target tile is changed
-    }
-
+    /**
+     * Called for each game tick.
+     */
     public void update() {
         move();
         if (!arrived) {
@@ -98,11 +96,15 @@ public class Enemy {
         }
     }
 
+    /**
+     * Calculates the angle and movement required to get from the current tile
+     * to the next.
+     */
     private void move() {
         if (!arrived) {
             if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < speed) {
                 nextTile();
-                if(arrived){
+                if (arrived) {
                     return;
                 }
             }
@@ -111,47 +113,57 @@ public class Enemy {
             } else if (path.peek().getEnemy() == null || path.peek().getEnemy() == this) {
                 tileX += speed * Math.cos(angle);
                 tileY += speed * Math.sin(angle);
-            } else if (Point2D.distance(path.peek().getEnemy().getTileX(), path.peek().getEnemy().getTileY(), path.peek().getX(), path.peek().getY()) > 1){
+            } else if (Point2D.distance(path.peek().getEnemy().getTileX(), path.peek().getEnemy().getTileY(), path.peek().getX(), path.peek().getY()) > 1) {
                 // UGLY WORKAROUND FOR A BUG, compensates for insufficient tile occupation removal
                 path.peek().setEnemy(this);
             }
         }
     }
-    
-    private void nextTile(){
+
+    /**
+     * Pops the tile stack once the enemy reaches the next tile.
+     */
+    private void nextTile() {
         tileX = path.peek().getX();
-                tileY = path.peek().getY();
-                if (previousTile.getEnemy() == this) {
-                    previousTile.setEnemy(null);
-                }
-                previousTile = path.pop();
-                if (path.isEmpty()) {
-                    arrived = true;
-                    previousTile.setEnemy(null);
-                    return;
-                }
-                setTargetAngle();
-    }
-    
-    private void turnTowardsTargetAngle(){
-        double angleDifference = angle - targetAngle;
-                if (Math.min(Math.abs(angleDifference), 2 * Math.PI - Math.abs(angleDifference)) < da) {
-                    angle = targetAngle;
-                } else if (angleDifference > Math.PI) {
-                    angle += da;
-                    angle %= 2 * Math.PI;
-                } else if (angleDifference > 0) {
-                    angle -= da;
-                    angle %= 2 * Math.PI;
-                } else if (angleDifference > -Math.PI) {
-                    angle += da;
-                    angle %= 2 * Math.PI;
-                } else {
-                    angle -= da;
-                    angle %= 2 * Math.PI;
-                }
+        tileY = path.peek().getY();
+        if (previousTile.getEnemy() == this) {
+            previousTile.setEnemy(null);
+        }
+        previousTile = path.pop();
+        if (path.isEmpty()) {
+            arrived = true;
+            previousTile.setEnemy(null);
+            return;
+        }
+        calculateTargetAngle();
     }
 
+    /**
+     * Turns with an increment of da for every tick until it reaches the target angle.
+     */
+    private void turnTowardsTargetAngle() {
+        double angleDifference = angle - targetAngle;
+        if (Math.min(Math.abs(angleDifference), 2 * Math.PI - Math.abs(angleDifference)) < da) {
+            angle = targetAngle;
+        } else if (angleDifference > Math.PI) {
+            angle += da;
+            angle %= 2 * Math.PI;
+        } else if (angleDifference > 0) {
+            angle -= da;
+            angle %= 2 * Math.PI;
+        } else if (angleDifference > -Math.PI) {
+            angle += da;
+            angle %= 2 * Math.PI;
+        } else {
+            angle -= da;
+            angle %= 2 * Math.PI;
+        }
+    }
+
+    /**
+     * Updates the status on which tiles the enemy currently occupies.
+     * Sometimes fails to remove occupation from tiles when assigning a new path
+     */
     private void calculateTileOccupation() {
         if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.9 && path.peek().getEnemy() == null) {
             path.peek().setEnemy(this);
@@ -161,12 +173,23 @@ public class Enemy {
         }
     }
 
-    private void setTargetAngle() {
+    private void calculateTargetAngle() {
         double dx = -tileX + path.peek().getX();
         double dy = -tileY + path.peek().getY();
         targetAngle = Math.atan2(dy, dx);
         targetAngle %= 2 * Math.PI;
 
+    }
+
+    /**
+     * @param amount the damage done to the enemy
+     */
+    public void takeDamage(int amount) {
+        hp -= amount;
+        if (hp <= 0) {
+            hp = 0;
+            destroyed = true;
+        }
     }
 
     public boolean isArrived() {
@@ -184,17 +207,17 @@ public class Enemy {
     public double getTileY() {
         return tileY;
     }
-    
-    public void takeDamage(int amount){
-        hp -= amount;
-        if(hp <= 0){
-            hp = 0;
-            destroyed = true;
-        }
+
+    public MapTile getCurrentTile() {
+        return previousTile;
+    }
+
+    public void setPath(LinkedList<MapTile> path) {
+        this.path = path;
+        calculateTargetAngle(); //recalculate angle in case target tile is changed
     }
 
     public int getValue() {
         return value;
     }
-    
 }
