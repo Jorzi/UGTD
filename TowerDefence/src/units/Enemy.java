@@ -41,6 +41,7 @@ public class Enemy {
     private boolean arrived;
     private boolean destroyed;
     private int hp = 100;
+    private int value = 20;
 
     public Enemy(LinkedList<MapTile> path) {
         try {
@@ -191,4 +192,9 @@ public class Enemy {
             destroyed = true;
         }
     }
+
+    public int getValue() {
+        return value;
+    }
+    
 }

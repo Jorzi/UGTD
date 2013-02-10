@@ -19,6 +19,7 @@ import terrain.MapTile;
 
 /**
  * The tower tracks and shoots at enemies within its active area.
+ * It's responsible for updating and painting its own projectiles.
  *
  * @author Göran Maconi
  */
@@ -38,6 +39,8 @@ public class Tower {
     private double reloadSpeed = 0.01;
     private double reloadCycle;
     public int range;
+    private int damage = 20;
+    private int price = 70;
 
     public Tower(int tileX, int tileY, ArrayList<MapTile> activeArea, int range) {
         this.tileX = tileX;
@@ -55,14 +58,7 @@ public class Tower {
     }
 
     public void update() {
-        for (int i = 0; i < projectiles.size(); i++) {
-            if (projectiles.get(i).isArrived()) {
-                projectiles.remove(i);
-                i--;
-            } else {
-                projectiles.get(i).update();
-            }
-        }
+        updateProjectiles();
         if (reloadCycle < 1) {
             reloadCycle += reloadSpeed;
         }
@@ -74,12 +70,23 @@ public class Tower {
         } else {
             double targetAngle = Math.atan2(target.getTileY() - tileY - 0.5, target.getTileX() - tileX - 0.5);
             turnTowardsTarget(targetAngle);
-            if(reloadCycle >= 1 && angle == targetAngle){
+            if (reloadCycle >= 1 && angle == targetAngle) {
                 fireAt(target.getCurrentTile());
                 reloadCycle = 0;
             }
             if (!activeArea.contains(target.getCurrentTile()) || target.isDestroyed()) {
                 target = null;
+            }
+        }
+    }
+
+    public void updateProjectiles() {
+        for (int i = 0; i < projectiles.size(); i++) {
+            if (projectiles.get(i).isFinished()) {
+                projectiles.remove(i);
+                i--;
+            } else {
+                projectiles.get(i).update();
             }
         }
     }
@@ -139,7 +146,7 @@ public class Tower {
     }
 
     private void fireAt(MapTile tile) {
-        projectiles.add(new Projectile(tileX + 0.5 + Math.cos(angle), tileY + 0.5 + Math.sin(angle), tile));
+        projectiles.add(new Projectile(tileX + 0.5 + Math.cos(angle), tileY + 0.5 + Math.sin(angle), tile, damage));
     }
 
     public int getTileX() {
@@ -149,4 +156,9 @@ public class Tower {
     public int getTileY() {
         return tileY;
     }
+
+    public int getPrice() {
+        return price;
+    }
+    
 }

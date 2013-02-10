@@ -36,10 +36,11 @@ import units.Tower;
 
 /**
  *
- * This is the central class of all game logic. It contains the game loop and draws all objects.
- * It also handles adding and removing of buildings and enemies.
- * 
- * 
+ * This is the central class of all game logic, as well as the main graphical
+ * element in the interface. It contains the game loop and draws all objects. It
+ * also handles adding and removing of buildings and enemies.
+ *
+ *
  * @author Göran Maconi
  */
 public class GameInstance extends JPanel implements ActionListener {
@@ -49,28 +50,30 @@ public class GameInstance extends JPanel implements ActionListener {
         BUILD, SELECT, SELL
     }
     public static mode mode;
-    public static int credits = 100;
+    private int credits;
     private Timer timer;
     private Random random;
-    private Point mouseCoords;
+    private Point mouseCoords = new Point();
     private Point mouseTileCoords = new Point();
     public TerrainMap map;
     public HashSet<Tower> towerList;
     public List<Enemy> enemyList;
     private boolean buildable;
 
-    public GameInstance(String mapName) {
+    public GameInstance(String mapName, int startCredits) {
 
         addKeyListener(new TAdapter());
         setFocusable(true);
         setDoubleBuffered(true);
         addMouseListener(new mouseInput());
 
+
         mode = mode.SELECT;
         map = new TerrainMap(mapName);
         random = new Random();
         towerList = new HashSet<>();
         enemyList = new ArrayList<>();
+        credits = startCredits;
 
         addEnemy(47, 19);
         addEnemy(47, 18);
@@ -157,18 +160,24 @@ public class GameInstance extends JPanel implements ActionListener {
         for (Tower tower : towerList) {
             tower.update();
         }
+        updateEnemies();
+        repaint();
+    }
+
+    public void updateEnemies() {
         for (int i = 0; i < enemyList.size(); i++) {
             enemyList.get(i).update();
-            if(enemyList.get(i).isArrived() || enemyList.get(i).isDestroyed()){
+            if (enemyList.get(i).isArrived() || enemyList.get(i).isDestroyed()) {
                 //TODO: add damage calculation
+                if (enemyList.get(i).isDestroyed()) {
+                    credits += enemyList.get(i).getValue();
+                    GameFrame.creditsLabel.setText("Credits: " + credits);
+                }
                 map.clearEnemy(enemyList.get(i));
                 enemyList.remove(i);
                 i--;
             }
         }
-
-        credits++;
-        repaint();
     }
 
 //    public boolean mouseInsideWindow() {
@@ -186,6 +195,13 @@ public class GameInstance extends JPanel implements ActionListener {
 //        }
 //        return true;
 //    }
+    /**
+     * Method to check if there's enough free area under the mouse to be able to
+     * place a tower of size x * y
+     *
+     * @param sizeX width of the tower to be placed, in tiles
+     * @param sizeY height of the tower to be placed, in tiles
+     */
     private void checkIfBuildable(int sizeX, int sizeY) {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
@@ -231,6 +247,7 @@ public class GameInstance extends JPanel implements ActionListener {
                 } else if (mode == mode.SELL) {
                     sellTower(mouseTileCoords.x, mouseTileCoords.y);
                 }
+                GameFrame.creditsLabel.setText("Credits: " + credits);
             }
         }
     }
@@ -238,7 +255,7 @@ public class GameInstance extends JPanel implements ActionListener {
     private ArrayList<MapTile> CalculateTowerRange(int x, int y, int radius) {
         ArrayList<MapTile> area = new ArrayList<>();
         Comparator<MapTile> compareDistance = new TileRangeComparator(x + 0.5, y + 0.5);
-        for (int i = Math.max(x - radius, 0); i < Math.min( x + radius + 2, map.getPixels().length); i++) {
+        for (int i = Math.max(x - radius, 0); i < Math.min(x + radius + 2, map.getPixels().length); i++) {
             for (int j = Math.max(y - radius, 0); j < Math.min(y + radius + 2, map.getPixels()[0].length); j++) {
                 if (map.getTile(i, j) != null) {
                     if (Point2D.distance(x + 0.5, y + 0.5, map.getTile(i, j).getX(), map.getTile(i, j).getY()) <= radius) {
@@ -252,28 +269,31 @@ public class GameInstance extends JPanel implements ActionListener {
     }
 
     public void addTower(String type, int x, int y) {
-        Tower t = new Tower(x, y, CalculateTowerRange(x, y, 7), 7);
-        towerList.add(t);
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                map.getTile(x + i, y + j).setPassable(false);
-                map.getTile(x + i, y + j).setTower(t);
+        Tower t = new Tower(x, y, CalculateTowerRange(x, y, 10), 10);
+        if (credits >= t.getPrice()) {
+            credits -= t.getPrice();
+            towerList.add(t);
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 2; j++) {
+                    map.getTile(x + i, y + j).setPassable(false);
+                    map.getTile(x + i, y + j).setTower(t);
+                }
             }
+            recalculatePaths();
         }
-        recalculatePaths();
     }
 
     public void sellTower(int x, int y) {
         if (map.getTile(x, y).getTower() != null) {
             Tower t = map.getTile(x, y).getTower();
             towerList.remove(t);
-            //TODO: add money handling
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 2; j++) {
                     map.getTile(t.getTileX() + i, t.getTileY() + j).setPassable(true);
                     map.getTile(t.getTileX() + i, t.getTileY() + j).setTower(null);
                 }
             }
+            credits += t.getPrice() / 2;
             recalculatePaths();
         }
     }
