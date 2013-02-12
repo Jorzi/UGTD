@@ -258,6 +258,15 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
+    
+    /**
+     * Calculates a circular area of tiles within which a tower can track and shoot enemies. 
+     * The tiles are sorted so that the tower will attack closer enemies first.
+     * @param x the x coordinate of the tower
+     * @param y the y coordinate of the tower
+     * @param radius the range of the tower
+     * @return a list containing all the tiles within the tower's range, sorted from closest to furthest away.
+     */
     private ArrayList<MapTile> CalculateTowerRange(int x, int y, int radius) {
         ArrayList<MapTile> area = new ArrayList<>();
         Comparator<MapTile> compareDistance = new TileRangeComparator(x + 0.5, y + 0.5);
@@ -274,6 +283,13 @@ public class GameInstance extends JPanel implements ActionListener {
         return area;
     }
 
+    /**
+     * Adds a tower to the map if there are enough credits to buy one.
+     * Also deducts the price from the total credits.
+     * @param type currently unused, for being able to build multiple tower types. any string is valid.
+     * @param x the tower's x tile coordinate
+     * @param y the tower's y tile coordinate
+     */
     public void addTower(String type, int x, int y) {
         Tower t = new Tower(x, y, CalculateTowerRange(x, y, 10), 10);
         if (credits >= t.getPrice()) {
@@ -289,6 +305,12 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Removes the tower (if any) from the tile, adding half of its price to the credits.
+     * If the tile contains no tower, nothing happens.
+     * @param x the selected tile's x coordinate
+     * @param y the selected tile's y coordinate
+     */
     public void sellTower(int x, int y) {
         if (map.getTile(x, y).getTower() != null) {
             Tower t = map.getTile(x, y).getTower();
@@ -304,6 +326,11 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Adds a new enemy to the map and assigns a path to it.
+     * @param x the x tile coordinate
+     * @param y the y tile coordinate
+     */
     public void addEnemy(int x, int y) {
         if (map.getTile(x, y) != null) {
             enemyList.add(new Enemy(map.generatePath(x, y)));
