@@ -10,11 +10,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import javax.imageio.ImageIO;
+import resources.ImageLoader;
 import terrain.MapTile;
 
 /**
@@ -31,8 +29,8 @@ public class Tower {
     private int tileY;
     private double angle = 0;
     private double da = 0.05;
-    private BufferedImage turretImage;
-    private BufferedImage baseImage;
+    private BufferedImage turretImage = ImageLoader.imageLibrary.get("turret1");
+    private BufferedImage baseImage = ImageLoader.imageLibrary.get("towerBase");
     private ArrayList<MapTile> activeArea;
     private Enemy target;
     private LinkedList<Projectile> projectiles;
@@ -49,12 +47,6 @@ public class Tower {
         reloadCycle = 1;
         projectiles = new LinkedList<>();
         this.range = range;
-        try {
-            baseImage = ImageIO.read(new File("turretbase1.png"));
-            turretImage = ImageIO.read(new File("turret1.png"));
-        } catch (IOException e) {
-            System.out.println("couldn't find image");
-        }
     }
 
     public void update() {

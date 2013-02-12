@@ -14,6 +14,7 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import resources.ImageLoader;
 import terrain.MapTile;
 
 /**
@@ -33,7 +34,7 @@ public class Projectile {
     private double currentTileY;
     private boolean arrived;
     private boolean finished;
-    private BufferedImage image;
+    private BufferedImage image = ImageLoader.imageLibrary.get("cannonball");
     private Explosion boom;
     private int damage;
 
@@ -45,11 +46,6 @@ public class Projectile {
         this.arrived = false;
         this.finished = false;
         this.damage = damage;
-        try {
-            image = ImageIO.read(new File("shell1.png"));
-        } catch (IOException e) {
-            System.out.println("couldn't find image");
-        }
     }
 
     public void update() {

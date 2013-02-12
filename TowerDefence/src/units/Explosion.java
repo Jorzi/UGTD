@@ -13,6 +13,7 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import resources.ImageLoader;
 
 /**
  *
@@ -22,7 +23,7 @@ public class Explosion {
 
     private double tileX;
     private double tileY;
-    private BufferedImage image;
+    private BufferedImage image = ImageLoader.imageLibrary.get("explosion1");
     private int duration = 20;
     private int frameCount = 5;
     private int progress;
@@ -32,11 +33,6 @@ public class Explosion {
         this.tileX = tileX;
         this.tileY = tileY;
         progress = 0;
-        try {
-            image = ImageIO.read(new File("boom1_spritesheet.png"));
-        } catch (IOException e) {
-            System.out.println("couldn't find image");
-        }
     }
 
     public void update() {

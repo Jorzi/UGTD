@@ -11,7 +11,7 @@ package game;
 public class GameFrame extends javax.swing.JFrame {
     
     private int startCredits = 100;
-    private String mapName = "map2.png";
+    private String mapName = "map2";
 
     /**
      * Creates new form NewJFrame

@@ -12,11 +12,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
-import javax.imageio.ImageIO;
 import terrain.MapTile;
+import resources.ImageLoader;
 
 /**
  * The sole objective of the enemy class, except for drawing its own graphical
@@ -35,7 +33,7 @@ public class Enemy {
     private double targetAngle;
     private double da = 0.05;
     private double speed; // tiles/frame, keep this between 0 and 1
-    private BufferedImage image;
+    private BufferedImage image = ImageLoader.imageLibrary.get("tank1");
     private LinkedList<MapTile> path; // stack of tiles left to traverse
     private MapTile previousTile;
     private boolean arrived;
@@ -49,13 +47,7 @@ public class Enemy {
      * stack is empty, the enemy has accomplished its mission.
      */
     public Enemy(LinkedList<MapTile> path) {
-        try {
-            image = ImageIO.read(new File("tank1.png"));
-        } catch (IOException e) {
-            System.out.println("couldn't find image");
-        }
         this.path = path;
-        path.peek().setEnemy(this);
         previousTile = this.path.pop();
         tileX = previousTile.getX();
         tileY = previousTile.getY();
@@ -64,6 +56,7 @@ public class Enemy {
         angle = targetAngle;
         arrived = false;
         destroyed = false;
+        path.peek().setEnemy(this);
     }
 
     public void paint(Graphics g, ImageObserver imOb) {
@@ -139,7 +132,8 @@ public class Enemy {
     }
 
     /**
-     * Turns with an increment of da for every tick until it reaches the target angle.
+     * Turns with an increment of da for every tick until it reaches the target
+     * angle.
      */
     private void turnTowardsTargetAngle() {
         double angleDifference = angle - targetAngle;
@@ -161,8 +155,8 @@ public class Enemy {
     }
 
     /**
-     * Updates the status on which tiles the enemy currently occupies.
-     * Sometimes fails to remove occupation from tiles when assigning a new path
+     * Updates the status on which tiles the enemy currently occupies. Sometimes
+     * fails to remove occupation from tiles when assigning a new path
      */
     private void calculateTileOccupation() {
         if (Point2D.distance(tileX, tileY, path.peek().getX(), path.peek().getY()) < 0.9 && path.peek().getEnemy() == null) {

@@ -29,6 +29,7 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
+        resources.ImageLoader.loadImages();
         GameFrame.main(args);
     }
 }

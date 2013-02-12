@@ -17,24 +17,27 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import javax.imageio.ImageIO;
+import resources.ImageLoader;
 import units.Enemy;
 
 /**
- * Responsible for creating and drawing the map object, as well as accessing MapTiles and pathfinding
+ * Responsible for creating and drawing the map object, as well as accessing
+ * MapTiles and pathfinding
+ *
  * @author Göran Maconi
  */
 public class TerrainMap {
 
     public static int[] target = {9, 26};
     private BufferedImage mapImage;
-    private BufferedImage tile1;
-    private BufferedImage tile2;
-    private BufferedImage bunker;
+    private BufferedImage tile1 = ImageLoader.imageLibrary.get("sandTile1");
+    private BufferedImage tile2 = ImageLoader.imageLibrary.get("rockTile1");
+    private BufferedImage bunker = ImageLoader.imageLibrary.get("hqBunker");
     private int[][] pixels; // tile index array
     private MapTile[][] navigationGraph;
 
     public TerrainMap(String mapName) {
-        loadImages(mapName);
+        mapImage = ImageLoader.imageLibrary.get(mapName);
 
         pixels = new int[mapImage.getWidth()][mapImage.getHeight()];
         navigationGraph = new MapTile[mapImage.getWidth()][mapImage.getHeight()];
@@ -43,16 +46,6 @@ public class TerrainMap {
         generateConnectivity();
     }
 
-    private void loadImages(String mapName) {
-        try {
-            mapImage = ImageIO.read(new File(mapName));
-            tile1 = ImageIO.read(new File("ground1.png")); //TODO: unhardcode tileset
-            tile2 = ImageIO.read(new File("rock1.png"));
-            bunker = ImageIO.read(new File("bunker1.png"));
-        } catch (IOException e) {
-            System.out.println("couldn't find image");
-        }
-    }
 
     private void fillTileArrays() {
         for (int i = 0; i < pixels.length; i++) {
@@ -115,7 +108,7 @@ public class TerrainMap {
                 }
             }
         }
-        g2d.drawImage(bunker, GlobalConstants.tileSize*target[0] - 16, GlobalConstants.tileSize*target[1] - 16, imOb);
+        g2d.drawImage(bunker, GlobalConstants.tileSize * target[0] - 16, GlobalConstants.tileSize * target[1] - 16, imOb);
     }
 
     public int[][] getPixels() {
@@ -170,11 +163,11 @@ public class TerrainMap {
         return null;
 
     }
-    
-    public void clearEnemy(Enemy e){
-        for(MapTile[] tileRow : navigationGraph){
-            for(MapTile tile : tileRow){
-                if(tile != null && tile.getEnemy() == e){
+
+    public void clearEnemy(Enemy e) {
+        for (MapTile[] tileRow : navigationGraph) {
+            for (MapTile tile : tileRow) {
+                if (tile != null && tile.getEnemy() == e) {
                     tile.setEnemy(null);
                 }
             }
