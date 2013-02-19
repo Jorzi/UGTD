@@ -28,6 +28,7 @@ public class EnemyTest {
     
     @BeforeClass
     public static void setUpClass() {
+        resources.ImageLoader.loadImages();
     }
     
     @AfterClass
@@ -36,7 +37,7 @@ public class EnemyTest {
     
     @Before
     public void setUp() {
-        map = new TerrainMap("map2.png");
+        map = new TerrainMap("map2");
         path = new LinkedList<>();
     }
     

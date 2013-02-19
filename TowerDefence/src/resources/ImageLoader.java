@@ -11,7 +11,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
- *
+ *Contains tools for centralized loading and accessing of image resources
  * @author Göran
  */
 public class ImageLoader {
@@ -20,6 +20,9 @@ public class ImageLoader {
 
     
     
+    /**
+     * Reads images from files and stores them in the image library by a name tag
+     */
     public static void loadImages(){
         //TODO: add automated loading
         try {

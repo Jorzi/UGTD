@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JPanel;
@@ -31,6 +30,7 @@ import javax.swing.Timer;
 import terrain.MapTile;
 import terrain.TerrainMap;
 import units.Enemy;
+import units.EnemyHandler;
 import units.TileRangeComparator;
 import units.Tower;
 
@@ -50,18 +50,18 @@ public class GameInstance extends JPanel implements ActionListener {
         BUILD, SELECT, SELL
     }
     public static mode mode;
-    private int credits;
+    public static int credits;
     private Timer timer;
     private Random random;
     private Point mouseCoords = new Point();
     private Point mouseTileCoords = new Point();
     public TerrainMap map;
     public HashSet<Tower> towerList;
-    public List<Enemy> enemyList;
+    private EnemyHandler enemyHandler;
     private boolean buildable;
 
     /**
-     * @param mapName the filename of the map image
+     * @param mapName the name of the map image in the imageLibrary
      * @param startCredits amount of money available at the start of the game
      */
     public GameInstance(String mapName, int startCredits) {
@@ -76,23 +76,33 @@ public class GameInstance extends JPanel implements ActionListener {
         map = new TerrainMap(mapName);
         random = new Random();
         towerList = new HashSet<>();
-        enemyList = new ArrayList<>();
         credits = startCredits;
+        enemyHandler = new EnemyHandler();
 
-        addEnemy(47, 19);
-        addEnemy(47, 18);
-        addEnemy(47, 17);
-        addEnemy(47, 16);
-        addEnemy(47, 15);
-        addEnemy(47, 14);
-        addEnemy(47, 13);
-        addEnemy(47, 12);
-        addEnemy(47, 11);
+        enemyHandler.addEnemy(47, 19, map);
+        enemyHandler.addEnemy(47, 18, map);
+        enemyHandler.addEnemy(47, 17, map);
+        enemyHandler.addEnemy(47, 16, map);
+        enemyHandler.addEnemy(47, 15, map);
+        enemyHandler.addEnemy(47, 14, map);
+        enemyHandler.addEnemy(47, 13, map);
+        enemyHandler.addEnemy(47, 12, map);
+        enemyHandler.addEnemy(47, 11, map);
 
         timer = new Timer(10, this);
         timer.start();
     }
 
+    /**
+     * This method is part of the GUI mechanism and should not be manually called.
+     * The order of painting is not random, but "depth ordered" in the following order to display correctly:
+     * -ground tiles
+     * -building bases
+     * -enemies
+     * -projectiles (including their explosions)
+     * -turrets
+     * -cursor and overlay elements
+     */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -101,9 +111,8 @@ public class GameInstance extends JPanel implements ActionListener {
         for (Tower tower : towerList) {
             tower.paintBase(g, this);
         }
-        for (Enemy enemy : enemyList) {
-            enemy.paint(g, this);
-        }
+        enemyHandler.paint(g, this);
+
         for (Tower tower : towerList) {
             tower.paintProjectiles(g, this);
         }
@@ -122,7 +131,8 @@ public class GameInstance extends JPanel implements ActionListener {
     }
 
     /**
-     * A sub-method to the paint method which highlights the tile beneath the cursor.
+     * A sub-method to the paint method which highlights the tile beneath the
+     * cursor.
      */
     private void paintCursor(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -151,11 +161,11 @@ public class GameInstance extends JPanel implements ActionListener {
         update();
         repaint();
     }
-    
+
     /**
      * Called every game tick. Progresses the game further.
      */
-    public void update(){
+    public void update() {
         mouseCoords = MouseInfo.getPointerInfo().getLocation();
         try {
             mouseCoords.x -= this.getLocationOnScreen().x;
@@ -171,28 +181,10 @@ public class GameInstance extends JPanel implements ActionListener {
         for (Tower tower : towerList) {
             tower.update();
         }
-        updateEnemies();
+        enemyHandler.update(map);
     }
 
-    /**
-     * sub-method of update. Calls the updates method of all enemies.
-     * Also handles removal of destroyed/arrived enemies
-     */
-    private void updateEnemies() {
-        for (int i = 0; i < enemyList.size(); i++) {
-            enemyList.get(i).update();
-            if (enemyList.get(i).isArrived() || enemyList.get(i).isDestroyed()) {
-                //TODO: add damage calculation
-                if (enemyList.get(i).isDestroyed()) {
-                    credits += enemyList.get(i).getValue();
-                    GameFrame.creditsLabel.setText("Credits: " + credits);
-                }
-                map.clearEnemy(enemyList.get(i));
-                enemyList.remove(i);
-                i--;
-            }
-        }
-    }
+
 
 
     /**
@@ -258,14 +250,16 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
-    
     /**
-     * Calculates a circular area of tiles within which a tower can track and shoot enemies. 
-     * The tiles are sorted so that the tower will attack closer enemies first.
+     * Calculates a circular area of tiles within which a tower can track and
+     * shoot enemies. The tiles are sorted so that the tower will attack closer
+     * enemies first.
+     *
      * @param x the x coordinate of the tower
      * @param y the y coordinate of the tower
      * @param radius the range of the tower
-     * @return a list containing all the tiles within the tower's range, sorted from closest to furthest away.
+     * @return a list containing all the tiles within the tower's range, sorted
+     * from closest to furthest away.
      */
     private ArrayList<MapTile> CalculateTowerRange(int x, int y, int radius) {
         ArrayList<MapTile> area = new ArrayList<>();
@@ -284,9 +278,13 @@ public class GameInstance extends JPanel implements ActionListener {
     }
 
     /**
-     * Adds a tower to the map if there are enough credits to buy one.
-     * Also deducts the price from the total credits.
-     * @param type currently unused, for being able to build multiple tower types. any string is valid.
+     * Adds a tower to the map if there are enough credits to buy one. Also
+     * deducts the price from the total credits.
+     * If the tower would prevent any tank from reaching the target or block the spawn,
+     * the tower will be removed and the cash returned
+     *
+     * @param type currently unused, for being able to build multiple tower
+     * types. any string is valid.
      * @param x the tower's x tile coordinate
      * @param y the tower's y tile coordinate
      */
@@ -294,20 +292,32 @@ public class GameInstance extends JPanel implements ActionListener {
         Tower t = new Tower(x, y, CalculateTowerRange(x, y, 10), 10);
         if (credits >= t.getPrice()) {
             credits -= t.getPrice();
-            towerList.add(t);
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 2; j++) {
                     map.getTile(x + i, y + j).setPassable(false);
                     map.getTile(x + i, y + j).setTower(t);
                 }
             }
-            recalculatePaths();
+            try {
+                enemyHandler.recalculatePaths(map);
+                map.generatePath(TerrainMap.spawn);
+                towerList.add(t);
+            } catch (Exception e) {
+                for (int i = 0; i < 2; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        map.getTile(x + i, y + j).setPassable(true);
+                        map.getTile(x + i, y + j).setTower(null);
+                    }
+                }
+                credits += t.getPrice();
+            }
         }
     }
 
     /**
-     * Removes the tower (if any) from the tile, adding half of its price to the credits.
-     * If the tile contains no tower, nothing happens.
+     * Removes the tower (if any) from the tile, adding half of its price to the
+     * credits. If the tile contains no tower, nothing happens.
+     *
      * @param x the selected tile's x coordinate
      * @param y the selected tile's y coordinate
      */
@@ -322,28 +332,13 @@ public class GameInstance extends JPanel implements ActionListener {
                 }
             }
             credits += t.getPrice() / 2;
-            recalculatePaths();
+            try {
+                enemyHandler.recalculatePaths(map);
+            } catch (Exception ex) {
+            }
         }
     }
 
-    /**
-     * Adds a new enemy to the map and assigns a path to it.
-     * @param x the x tile coordinate
-     * @param y the y tile coordinate
-     */
-    public void addEnemy(int x, int y) {
-        if (map.getTile(x, y) != null) {
-            enemyList.add(new Enemy(map.generatePath(x, y)));
-        } else {
-            System.out.println("cannot place enemy");
-        }
-    }
-
-    public void recalculatePaths() {
-        for (Enemy enemy : enemyList) {
-            enemy.setPath(map.generatePath(enemy.getCurrentTile().getX(), enemy.getCurrentTile().getY()));
-        }
-    }
 
     public static void setMode(mode mode) {
         GameInstance.mode = mode;

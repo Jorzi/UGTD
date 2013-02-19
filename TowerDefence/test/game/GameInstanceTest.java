@@ -27,6 +27,7 @@ public class GameInstanceTest {
     
     @BeforeClass
     public static void setUpClass() {
+        resources.ImageLoader.loadImages();
     }
     
     @AfterClass
@@ -35,7 +36,7 @@ public class GameInstanceTest {
     
     @Before
     public void setUp() {
-        game = new GameInstance("map2.png", 100);
+        game = new GameInstance("map2", 100);
     }
     
     @After
@@ -48,7 +49,6 @@ public class GameInstanceTest {
     public void gameInstanceInitialisation() {
         
         assertTrue(game.map != null);
-        assertTrue(game.enemyList != null);
         assertTrue(game.towerList != null);
     }
     
@@ -72,4 +72,6 @@ public class GameInstanceTest {
         game.addTower("", 7, 7);
         assertEquals(size + 1, game.towerList.size());
     }
+    
+        
 }

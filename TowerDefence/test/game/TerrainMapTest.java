@@ -19,12 +19,15 @@ import terrain.TerrainMap;
  * @author Göran
  */
 public class TerrainMapTest {
+    
+    TerrainMap map;
 
     public TerrainMapTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
+        resources.ImageLoader.loadImages();
     }
 
     @AfterClass
@@ -33,6 +36,7 @@ public class TerrainMapTest {
 
     @Before
     public void setUp() {
+        map = new TerrainMap("map2");
     }
 
     @After
@@ -44,20 +48,17 @@ public class TerrainMapTest {
 
     @Test
     public void properInitialization() {
-        TerrainMap map = new TerrainMap("map2.png");
         assertEquals(map.getPixels().length, map.getMapImage().getWidth());
         assertEquals(map.getPixels()[0].length, map.getMapImage().getHeight());
     }
     
     @Test
-    public void testPathfindingSimple(){
-        TerrainMap map = new TerrainMap("map2.png");
+    public void testPathfindingSimple() throws Exception{
         assertEquals(1, map.generatePath(TerrainMap.target[0], TerrainMap.target[1]).size());
     }
     
     @Test
-    public void testPathfindingComplex(){
-        TerrainMap map = new TerrainMap("map2.png");
+    public void testPathfindingComplex() throws Exception{
         assertEquals(TerrainMap.target[0], map.generatePath(47, 19).getLast().getX());
         assertEquals(TerrainMap.target[1], map.generatePath(47, 19).getLast().getY());
     }

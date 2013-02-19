@@ -8,6 +8,8 @@ import game.GlobalConstants;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
@@ -29,6 +31,7 @@ import units.Enemy;
 public class TerrainMap {
 
     public static int[] target = {9, 26};
+    public static Point spawn = new Point(47, 14);
     private BufferedImage mapImage;
     private BufferedImage tile1 = ImageLoader.imageLibrary.get("sandTile1");
     private BufferedImage tile2 = ImageLoader.imageLibrary.get("rockTile1");
@@ -119,7 +122,7 @@ public class TerrainMap {
         return mapImage;
     }
 
-    public LinkedList<MapTile> generatePath(int startX, int startY) {
+    public LinkedList<MapTile> generatePath(int startX, int startY) throws Exception {
         HashSet<MapTile> closedSet = new HashSet<>();
         PriorityQueue<Node> openSet = new PriorityQueue<>();
         HashMap<MapTile, Node> openSet2 = new HashMap<>(); // same as openSet in a different data structure
@@ -160,8 +163,11 @@ public class TerrainMap {
                 }
             }
         }
-        return null;
+        throw new Exception("Path blocked");
 
+    }
+    public LinkedList<MapTile> generatePath(Point tileCoords) throws Exception {
+        return generatePath(tileCoords.x, tileCoords.y);
     }
 
     public void clearEnemy(Enemy e) {
