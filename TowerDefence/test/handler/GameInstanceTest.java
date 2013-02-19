@@ -1,4 +1,4 @@
-package game;
+package handler;
 
 /*
  * To change this template, choose Tools | Templates
@@ -6,13 +6,12 @@ package game;
  */
 
 import game.GameInstance;
-import game.Main;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -52,19 +51,6 @@ public class GameInstanceTest {
         assertTrue(game.towerList != null);
     }
     
-    @Test
-    public void enemyGetsAdded() {
-        int size = game.enemyList.size();
-        game.addEnemy(47, 10);
-        assertEquals(size + 1, game.enemyList.size());
-    }
-    
-    @Test
-    public void enemyNotAddedOnRock() {
-        int size = game.enemyList.size();
-        game.addEnemy(0, 0);
-        assertEquals(size, game.enemyList.size());
-    }
     
     @Test
     public void towerGetsAdded() {

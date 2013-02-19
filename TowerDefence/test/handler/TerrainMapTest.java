@@ -1,4 +1,4 @@
-package game;
+package handler;
 
 /*
  * To change this template, choose Tools | Templates
