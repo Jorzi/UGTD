@@ -77,17 +77,17 @@ public class GameInstance extends JPanel implements ActionListener {
         random = new Random();
         towerList = new HashSet<>();
         credits = startCredits;
-        enemyHandler = new EnemyHandler();
+        enemyHandler = new EnemyHandler(map);
 
-        enemyHandler.addEnemy(47, 19, map);
-        enemyHandler.addEnemy(47, 18, map);
-        enemyHandler.addEnemy(47, 17, map);
-        enemyHandler.addEnemy(47, 16, map);
-        enemyHandler.addEnemy(47, 15, map);
-        enemyHandler.addEnemy(47, 14, map);
-        enemyHandler.addEnemy(47, 13, map);
-        enemyHandler.addEnemy(47, 12, map);
-        enemyHandler.addEnemy(47, 11, map);
+//        enemyHandler.addEnemy(47, 19);
+//        enemyHandler.addEnemy(47, 18);
+//        enemyHandler.addEnemy(47, 17);
+//        enemyHandler.addEnemy(47, 16);
+//        enemyHandler.addEnemy(47, 15);
+//        enemyHandler.addEnemy(47, 14);
+//        enemyHandler.addEnemy(47, 13);
+//        enemyHandler.addEnemy(47, 12);
+//        enemyHandler.addEnemy(47, 11);
 
         timer = new Timer(10, this);
         timer.start();
@@ -181,7 +181,7 @@ public class GameInstance extends JPanel implements ActionListener {
         for (Tower tower : towerList) {
             tower.update();
         }
-        enemyHandler.update(map);
+        enemyHandler.update();
     }
 
 
@@ -299,7 +299,7 @@ public class GameInstance extends JPanel implements ActionListener {
                 }
             }
             try {
-                enemyHandler.recalculatePaths(map);
+                enemyHandler.recalculatePaths();
                 map.generatePath(TerrainMap.spawn);
                 towerList.add(t);
             } catch (Exception e) {
@@ -333,7 +333,7 @@ public class GameInstance extends JPanel implements ActionListener {
             }
             credits += t.getPrice() / 2;
             try {
-                enemyHandler.recalculatePaths(map);
+                enemyHandler.recalculatePaths();
             } catch (Exception ex) {
             }
         }

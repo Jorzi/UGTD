@@ -28,20 +28,20 @@ public class EnemyHandlerTest {
     @Before
     public void setUp() {
         map = new TerrainMap("map2");
-        handler = new EnemyHandler();
+        handler = new EnemyHandler(map);
     }
 
     @Test
     public void enemyGetsAdded() {
         int size = handler.enemyList.size();
-        handler.addEnemy(47, 10, map);
+        handler.addEnemy(47, 10);
         assertEquals(size + 1, handler.enemyList.size());
     }
 
     @Test
     public void enemyNotAddedOnRock() {
         int size = handler.enemyList.size();
-        handler.addEnemy(0, 0, map);
+        handler.addEnemy(0, 0);
         assertEquals(size, handler.enemyList.size());
     }
 }

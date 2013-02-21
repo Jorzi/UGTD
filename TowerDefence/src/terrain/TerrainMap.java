@@ -95,6 +95,9 @@ public class TerrainMap {
     public MapTile getTile(int x, int y) {
         return navigationGraph[x][y];
     }
+    public MapTile getTile(Point coords) {
+        return getTile(coords.x, coords.y);
+    }
 
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;

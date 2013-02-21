@@ -56,7 +56,12 @@ public class Enemy {
         angle = targetAngle;
         arrived = false;
         destroyed = false;
-        path.peek().setEnemy(this);
+        //path.peek().setEnemy(this);
+    }
+    
+    public Enemy(LinkedList<MapTile> path, int hp) {
+        this(path);
+        this.hp = hp;
     }
 
     public void paint(Graphics g, ImageObserver imOb) {
