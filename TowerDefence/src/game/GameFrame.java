@@ -5,7 +5,7 @@
 package game;
 
 /**
- *
+ *  The main game window, contains all other game elements.
  * @author Göran Maconi
  */
 public class GameFrame extends javax.swing.JFrame {
@@ -18,6 +18,7 @@ public class GameFrame extends javax.swing.JFrame {
      */
     public GameFrame() {
         initComponents();
+        setTitle("Ultra Generic Tower Defence by Jorzi");
     }
 
     /**
@@ -31,8 +32,6 @@ public class GameFrame extends javax.swing.JFrame {
 
         jPanel1 = new GameInstance(mapName, startCredits);
         BuildTowerButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         SellButton = new javax.swing.JButton();
         creditsLabel = new javax.swing.JLabel();
 
@@ -62,12 +61,6 @@ public class GameFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("jButton1");
-        jButton3.setFocusable(false);
-
-        jButton4.setText("jButton1");
-        jButton4.setFocusable(false);
-
         SellButton.setText("Sell");
         SellButton.setFocusable(false);
         SellButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -87,8 +80,6 @@ public class GameFrame extends javax.swing.JFrame {
                 .addContainerGap(45, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(BuildTowerButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(SellButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(creditsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -105,11 +96,7 @@ public class GameFrame extends javax.swing.JFrame {
                         .addComponent(creditsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(BuildTowerButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(146, 146, 146)
                         .addComponent(SellButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -118,12 +105,10 @@ public class GameFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BuildTowerButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BuildTowerButton1MousePressed
-        // TODO add your handling code here:
         GameInstance.setMode(GameInstance.mode.BUILD);
     }//GEN-LAST:event_BuildTowerButton1MousePressed
 
     private void SellButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SellButtonMousePressed
-        // TODO add your handling code here:
         GameInstance.setMode(GameInstance.mode.SELL);
     }//GEN-LAST:event_SellButtonMousePressed
 
@@ -165,8 +150,6 @@ public class GameFrame extends javax.swing.JFrame {
     private javax.swing.JButton BuildTowerButton1;
     private javax.swing.JButton SellButton;
     public static javax.swing.JLabel creditsLabel;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

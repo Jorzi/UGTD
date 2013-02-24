@@ -21,7 +21,7 @@ public class Main extends JFrame {
 
         //this.setExtendedState(this.getExtendedState() | this.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
-        setTitle("Ultra Generic Tower Defence");
+        setTitle("Ultra Generic Tower Defence by Jorzi");
         //setResizable(true);
         setVisible(true);
 

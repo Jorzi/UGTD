@@ -10,12 +10,13 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import resources.ImageLoader;
 
 /**
+ * The explosion is essentially nothing more than an animated sprite. It
+ * automatically disables itself after having played through all frames. The
+ * animation technique used is a simple spritesheet image where the frames are
+ * lined up horizontally.
  *
  * @author Göran
  */

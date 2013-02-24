@@ -11,9 +11,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import resources.ImageLoader;
 import terrain.MapTile;
 
@@ -60,14 +57,18 @@ public class Projectile {
                 currentTileX += Math.cos(angle) * velocity;
                 currentTileY += Math.sin(angle) * velocity;
             }
-        } else if (!finished){
+        } else if (!finished) {
             boom.update();
-            if(boom.isFinished()){
+            if (boom.isFinished()) {
                 finished = true;
             }
         }
     }
 
+    /**
+     * Does area effect damage to any enemies in a 3x3 tile area. The central
+     * tile takes full damage while neighboring tiles take only half the amount.
+     */
     private void dealDamage() {
         if (endTile.getEnemy() != null) {
             endTile.getEnemy().takeDamage(damage);
@@ -81,16 +82,16 @@ public class Projectile {
 
     public void paint(Graphics g, ImageObserver imOb) {
         Graphics2D g2d = (Graphics2D) g;
-        
-        if(!arrived){
-        AffineTransform a = g2d.getTransform();
-        g2d.translate(currentTileX * GlobalConstants.tileSize, currentTileY * GlobalConstants.tileSize);
-        g2d.translate(centerX, centerY);
-        g2d.rotate(angle + Math.PI * 0.5);
-        g2d.translate(-centerX, -centerY);
-        g2d.drawImage(image, 0, 0, imOb);
-        g2d.setTransform(a);
-        }else{
+
+        if (!arrived) {
+            AffineTransform a = g2d.getTransform();
+            g2d.translate(currentTileX * GlobalConstants.tileSize, currentTileY * GlobalConstants.tileSize);
+            g2d.translate(centerX, centerY);
+            g2d.rotate(angle + Math.PI * 0.5);
+            g2d.translate(-centerX, -centerY);
+            g2d.drawImage(image, 0, 0, imOb);
+            g2d.setTransform(a);
+        } else {
             boom.paint(g, imOb);
         }
     }
@@ -98,6 +99,4 @@ public class Projectile {
     public boolean isFinished() {
         return finished;
     }
-
-    
 }

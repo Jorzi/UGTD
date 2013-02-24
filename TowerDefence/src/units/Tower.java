@@ -16,8 +16,8 @@ import resources.ImageLoader;
 import terrain.MapTile;
 
 /**
- * The tower tracks and shoots at enemies within its active area.
- * It's responsible for updating and painting its own projectiles.
+ * The tower tracks and shoots at enemies within its active area. It's
+ * responsible for updating and painting its own projectiles.
  *
  * @author Göran Maconi
  */
@@ -72,6 +72,9 @@ public class Tower {
         }
     }
 
+    /**
+     * Calls update for all projectiles fired by this tower.
+     */
     public void updateProjectiles() {
         for (int i = 0; i < projectiles.size(); i++) {
             if (projectiles.get(i).isFinished()) {
@@ -108,6 +111,13 @@ public class Tower {
         g2d.setTransform(a);
     }
 
+    /**
+     * Loops through the tiles in the active area and locks on to the first
+     * target it finds. Since the tile list is sorted according to distance, the
+     * closest enemy will be chosen.
+     *
+     * @return true if a target is found, false otherwise
+     */
     private boolean findTarget() {
         for (MapTile tile : activeArea) {
             if (tile.getEnemy() != null) {
@@ -118,6 +128,12 @@ public class Tower {
         return false;
     }
 
+    /**
+     * Changes the angle by an increment of da towards the target angle. Always
+     * chooses the shortest spin direction.
+     *
+     * @param targetAngle the angle towards which to turn.
+     */
     private void turnTowardsTarget(double targetAngle) {
         double angleDifference = angle - targetAngle;
         if (Math.min(Math.abs(angleDifference), 2 * Math.PI - Math.abs(angleDifference)) < da) {
@@ -137,6 +153,11 @@ public class Tower {
         }
     }
 
+    /**
+     * Creates a new projectile object that advances towards the target tile.
+     * 
+     * @param tile the target MapTile object.
+     */
     private void fireAt(MapTile tile) {
         projectiles.add(new Projectile(tileX + 0.5 + Math.cos(angle), tileY + 0.5 + Math.sin(angle), tile, damage));
     }
@@ -152,5 +173,4 @@ public class Tower {
     public int getPrice() {
         return price;
     }
-    
 }

@@ -32,7 +32,7 @@ public class Enemy {
     private double angle;
     private double targetAngle;
     private double da = 0.05;
-    private double speed; // tiles/frame, keep this between 0 and 1
+    private double speed = 0.02; // tiles/frame, keep this between 0 and 1
     private BufferedImage image = ImageLoader.imageLibrary.get("tank1");
     private LinkedList<MapTile> path; // stack of tiles left to traverse
     private MapTile previousTile;
@@ -51,14 +51,12 @@ public class Enemy {
         previousTile = this.path.pop();
         tileX = previousTile.getX();
         tileY = previousTile.getY();
-        speed = 0.02;
         calculateTargetAngle();
         angle = targetAngle;
         arrived = false;
         destroyed = false;
-        //path.peek().setEnemy(this);
     }
-    
+
     public Enemy(LinkedList<MapTile> path, int hp) {
         this(path);
         this.hp = hp;
@@ -172,6 +170,10 @@ public class Enemy {
         }
     }
 
+    /**
+     * (re)calculates the angular direction to the next tile with respect to the
+     * enemy's current position.
+     */
     private void calculateTargetAngle() {
         double dx = -tileX + path.peek().getX();
         double dy = -tileY + path.peek().getY();

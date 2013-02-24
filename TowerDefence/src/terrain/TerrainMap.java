@@ -5,20 +5,15 @@
 package terrain;
 
 import game.GlobalConstants;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
-import javax.imageio.ImageIO;
 import resources.ImageLoader;
 import units.Enemy;
 
@@ -49,7 +44,10 @@ public class TerrainMap {
         generateConnectivity();
     }
 
-
+    /**
+     * Reads pixels and creates MapTile objects at coordinates with "passable"
+     * values.
+     */
     private void fillTileArrays() {
         for (int i = 0; i < pixels.length; i++) {
             for (int j = 0; j < pixels[0].length; j++) {
@@ -65,6 +63,10 @@ public class TerrainMap {
         }
     }
 
+    /**
+     * Loops through the navigationGraph and connects adjacent tiles, i.e. the 8
+     * nearest neighbors.
+     */
     private void generateConnectivity() {
         for (int i = 0; i < pixels.length; i++) {
             for (int j = 0; j < pixels[0].length; j++) {
@@ -95,6 +97,7 @@ public class TerrainMap {
     public MapTile getTile(int x, int y) {
         return navigationGraph[x][y];
     }
+
     public MapTile getTile(Point coords) {
         return getTile(coords.x, coords.y);
     }
@@ -125,6 +128,15 @@ public class TerrainMap {
         return mapImage;
     }
 
+    /**
+     * A* pathfinding algorithm. Generates a path (a stack of tiles) from the
+     * input coordinates to the static goal coordinates.
+     *
+     * @param startX the current x tile coordinate
+     * @param startY the current y tile coordinate
+     * @return a stack (LinkedList) of MapTiles representing the path.
+     * @throws Exception if a path to the target cannot be found.
+     */
     public LinkedList<MapTile> generatePath(int startX, int startY) throws Exception {
         HashSet<MapTile> closedSet = new HashSet<>();
         PriorityQueue<Node> openSet = new PriorityQueue<>();
@@ -169,10 +181,18 @@ public class TerrainMap {
         throw new Exception("Path blocked");
 
     }
+
     public LinkedList<MapTile> generatePath(Point tileCoords) throws Exception {
         return generatePath(tileCoords.x, tileCoords.y);
     }
 
+    /**
+     * Checks and clears all tiles from a specific enemy occupation. Called when
+     * an enemy is destroyed in order to make sure that it is removed by the
+     * garbage collector.
+     *
+     * @param e
+     */
     public void clearEnemy(Enemy e) {
         for (MapTile[] tileRow : navigationGraph) {
             for (MapTile tile : tileRow) {
@@ -183,6 +203,10 @@ public class TerrainMap {
         }
     }
 
+    /**
+     * The node is a temporary wrapper for the MapTile, containing info required
+     * for the pathfinder.
+     */
     public class Node implements Comparable<Node> {
 
         public double dist;

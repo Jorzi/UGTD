@@ -5,6 +5,7 @@
 package game;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.IllegalComponentStateException;
@@ -22,14 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
 import terrain.MapTile;
 import terrain.TerrainMap;
-import units.Enemy;
 import units.EnemyHandler;
 import units.TileRangeComparator;
 import units.Tower;
@@ -52,13 +49,14 @@ public class GameInstance extends JPanel implements ActionListener {
     public static mode mode;
     public static int credits;
     private Timer timer;
-    private Random random;
+    private int targetFPS = 60;
     private Point mouseCoords = new Point();
     private Point mouseTileCoords = new Point();
     public TerrainMap map;
     public HashSet<Tower> towerList;
     private EnemyHandler enemyHandler;
     private boolean buildable;
+    private boolean gameOver;
 
     /**
      * @param mapName the name of the map image in the imageLibrary
@@ -71,37 +69,22 @@ public class GameInstance extends JPanel implements ActionListener {
         setDoubleBuffered(true);
         addMouseListener(new mouseInput());
 
-
         mode = mode.SELECT;
         map = new TerrainMap(mapName);
-        random = new Random();
         towerList = new HashSet<>();
         credits = startCredits;
         enemyHandler = new EnemyHandler(map);
-
-//        enemyHandler.addEnemy(47, 19);
-//        enemyHandler.addEnemy(47, 18);
-//        enemyHandler.addEnemy(47, 17);
-//        enemyHandler.addEnemy(47, 16);
-//        enemyHandler.addEnemy(47, 15);
-//        enemyHandler.addEnemy(47, 14);
-//        enemyHandler.addEnemy(47, 13);
-//        enemyHandler.addEnemy(47, 12);
-//        enemyHandler.addEnemy(47, 11);
-
-        timer = new Timer(10, this);
+        gameOver = false;
+        timer = new Timer(1000/targetFPS, this);
         timer.start();
     }
 
     /**
-     * This method is part of the GUI mechanism and should not be manually called.
-     * The order of painting is not random, but "depth ordered" in the following order to display correctly:
-     * -ground tiles
-     * -building bases
-     * -enemies
-     * -projectiles (including their explosions)
-     * -turrets
-     * -cursor and overlay elements
+     * This method is part of the GUI mechanism and should not be manually
+     * called. The order of painting is not random, but "depth ordered" in the
+     * following order to display correctly: -ground tiles -building bases
+     * -enemies -projectiles (including their explosions) -turrets -cursor and
+     * overlay elements
      */
     @Override
     public void paint(Graphics g) {
@@ -123,7 +106,11 @@ public class GameInstance extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.RED);
         g2d.drawString(mouseCoords.x + " " + mouseCoords.y + " " + mode, 0, 15);
-        paintCursor(g);
+        if (!gameOver) {
+            paintCursor(g);
+        } else {
+            paintGameOverScreen(g);
+        }
 
 
         Toolkit.getDefaultToolkit().sync();
@@ -156,9 +143,25 @@ public class GameInstance extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Sub-method of paint, overlays a game over screen onto the canvas.
+     */
+    private void paintGameOverScreen(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(new Color(0, 0, 0, 96));
+        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+        g2d.setFont(new Font("Arial", Font.PLAIN, 72));
+        g2d.setColor(Color.red);
+        g2d.drawString("Game Over", this.getWidth() / 2, this.getHeight() / 2);
+        g2d.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2d.drawString("Waves survived: " + enemyHandler.getWaveNumber(), this.getWidth() / 2, this.getHeight() / 2 + 30);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        update();
+        if (!gameOver) {
+            update();
+        }
         repaint();
     }
 
@@ -182,10 +185,8 @@ public class GameInstance extends JPanel implements ActionListener {
             tower.update();
         }
         enemyHandler.update();
+        gameOver = enemyHandler.isGameOver();
     }
-
-
-
 
     /**
      * Method to check if there's enough free area under the mouse to be able to
@@ -279,9 +280,9 @@ public class GameInstance extends JPanel implements ActionListener {
 
     /**
      * Adds a tower to the map if there are enough credits to buy one. Also
-     * deducts the price from the total credits.
-     * If the tower would prevent any tank from reaching the target or block the spawn,
-     * the tower will be removed and the cash returned
+     * deducts the price from the total credits. If the tower would prevent any
+     * tank from reaching the target or block the spawn, the tower will be
+     * removed and the cash returned
      *
      * @param type currently unused, for being able to build multiple tower
      * types. any string is valid.
@@ -338,7 +339,6 @@ public class GameInstance extends JPanel implements ActionListener {
             }
         }
     }
-
 
     public static void setMode(mode mode) {
         GameInstance.mode = mode;

@@ -16,6 +16,7 @@ import java.util.List;
 import terrain.TerrainMap;
 
 /**
+ * This class is responsible for updating, drawing and creating enemies.
  *
  * @author Göran
  */
@@ -28,6 +29,7 @@ public class EnemyHandler {
     private int waveNumber;
     private LinkedList<Integer> currentWaveQueue;
     private TerrainMap map;
+    private boolean gameOver;
 
     public EnemyHandler(TerrainMap map) {
         this.map = map;
@@ -36,6 +38,7 @@ public class EnemyHandler {
         ticksSinceLastWave = waveDelay * 7 / 8;
         waveInProgress = false;
         waveNumber = 0;
+        gameOver = false;
     }
 
     public void paint(Graphics g, ImageObserver imOb) {
@@ -57,10 +60,12 @@ public class EnemyHandler {
         for (int i = 0; i < enemyList.size(); i++) {
             enemyList.get(i).update();
             if (enemyList.get(i).isArrived() || enemyList.get(i).isDestroyed()) {
-                //TODO: add damage calculation
                 if (enemyList.get(i).isDestroyed()) {
                     GameInstance.credits += enemyList.get(i).getValue();
                     GameFrame.creditsLabel.setText("Credits: " + GameInstance.credits);
+                }
+                if (enemyList.get(i).isArrived()) {
+                    gameOver = true;
                 }
                 map.clearEnemy(enemyList.get(i));
                 enemyList.remove(i);
@@ -69,6 +74,11 @@ public class EnemyHandler {
         }
     }
 
+    /**
+     * Called every game tick, responsible for creating enemies at regular
+     * intervals. The interval between waves can be adjusted by changing the
+     * waveDeley variable.
+     */
     private void waveGenerator() {
         ticksSinceLastWave++;
         if (waveInProgress) {
@@ -90,7 +100,7 @@ public class EnemyHandler {
         } else if (ticksSinceLastWave > waveDelay) {
             System.out.println("Creating new wave");
             for (int i = 0; i < 10; i++) {
-                currentWaveQueue.addLast(100 + 100 * waveNumber);
+                currentWaveQueue.addLast((int) (100 * Math.pow(1.3, waveNumber)));
             }
             waveNumber++;
             waveInProgress = true;
@@ -102,7 +112,6 @@ public class EnemyHandler {
      *
      * @param x the x tile coordinate
      * @param y the y tile coordinate
-     * @param map the game's current TerrainMap object
      */
     public void addEnemy(int x, int y) {
         try {
@@ -110,7 +119,6 @@ public class EnemyHandler {
         } catch (Exception ex) {
             System.out.println("cannot place enemy");
         }
-
     }
 
     public void addEnemy(Point coords) {
@@ -120,12 +128,19 @@ public class EnemyHandler {
     /**
      * Calculates a new route for every enemy in the game.
      *
-     * @param map the game's current TerrainMap object
-     * @throws Exception
+     * @throws Exception if a path to the target does not exist.
      */
     public void recalculatePaths() throws Exception {
         for (Enemy enemy : enemyList) {
             enemy.setPath(map.generatePath(enemy.getCurrentTile().getX(), enemy.getCurrentTile().getY()));
         }
+    }
+
+    public int getWaveNumber() {
+        return waveNumber;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 }
