@@ -64,10 +64,10 @@ public class GameInstance extends JPanel implements ActionListener {
      */
     public GameInstance(String mapName, int startCredits) {
 
-        addKeyListener(new TAdapter());
+        addKeyListener(new KeyboardInput());
         setFocusable(true);
         setDoubleBuffered(true);
-        addMouseListener(new mouseInput());
+        addMouseListener(new MouseInput());
 
         mode = mode.SELECT;
         map = new TerrainMap(mapName);
@@ -105,7 +105,7 @@ public class GameInstance extends JPanel implements ActionListener {
 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.RED);
-        g2d.drawString(mouseCoords.x + " " + mouseCoords.y + " " + mode, 0, 15);
+        //g2d.drawString(mouseCoords.x + " " + mouseCoords.y + " " + mode, 0, 15);
         if (!gameOver) {
             paintCursor(g);
         } else {
@@ -217,7 +217,7 @@ public class GameInstance extends JPanel implements ActionListener {
     /**
      * Used for reading key input.
      */
-    private class TAdapter extends KeyAdapter {
+    private class KeyboardInput extends KeyAdapter {
 
         @Override
         public void keyReleased(KeyEvent e) {
@@ -236,7 +236,7 @@ public class GameInstance extends JPanel implements ActionListener {
     /**
      * Used for reading mouse input.
      */
-    private class mouseInput extends MouseAdapter {
+    private class MouseInput extends MouseAdapter {
 
         @Override
         public void mousePressed(MouseEvent e) {
