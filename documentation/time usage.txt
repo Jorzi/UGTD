@@ -18,3 +18,62 @@ sun 20.01.2013 - 2 hrs
 
 mon 21.01.2013 - 2 hrs
 	-finished path navigation code for enemies
+
+tue 22.01.2013 - 4 hrs
+	-made a basic class diagram
+	-started doing unit tests
+	-debugging
+
+mon 28.01.2013 - 3 hrs
+	-experimented with Netbeans' built-in UI design features
+
+tue 29.01.2013 - 2 hrs
+	-made a better, updated class diagram
+	-some more unit tests
+
+wed 30.01.2013 - 2 hrs
+	-implemented placing of towers
+	-connected the buttons in the interface
+
+thu 31.01.2013 - 2 hrs
+	-Rewrote enemy movement code because of "teleporting" caused by recalculating the path on the fly.
+	-Fixed one buggy behaviour, caused another one related to collision avoidance
+
+fri 01.02.2013 - 3 hrs
+	-Tried desperately to fix collision avoidance bug
+	-Managed to reduce buggy behaviour, but not solve it.
+
+sun 03.02.2013 - 1 hr
+	-implemented selling of towers.
+
+tue 05.02.2013 - 3 hrs
+	-did some workarounds to prevent buggy enemy behaviour
+	-enemies that arrive at the target are now removed from the list
+	-started writing javadoc for the classes
+
+thu 07.02.2013 - 3 hrs
+	-created a projectile class and damage calculations
+	-made the AI for towers so that they track and shoot at enemies
+
+sun 10.02.2013 - 2 hrs
+	-wrote more javadoc
+	-added explosion fx when the projectiles hit
+	-building now requires money which can be aquired by destroying enemies/selling towers
+
+tue 12.02.2013 - 3 hrs
+	-wrote more documentation
+	-sequence charts totally suck
+	-refactored image loading to use a central image library
+
+tue 19.02.2013 - 2 hrs
+	-some more unit tests
+	-no longer possible to cause nullpointer exceptions by blocking the path with towers
+
+thu 21.02.2013 - 3 hrs
+	-refactored enemy related functionality into its own class
+	-units are now spawned in waves
+
+sun 24.02.2013 - 6 hrs
+	-final touches
+	-added a basic game over screen
+	-finished documentation & stuff
