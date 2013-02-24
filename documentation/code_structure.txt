@@ -1,0 +1,10 @@
+Code structure
+
+The main element of the game is the GameInstance.
+It exteds a JPanel and therefore works as the canvas for all the game graphics. 
+It also contains the game loop as well as nested classes for mouse and keyboard input.
+Currently the enemy objects are handled, created and updated by the GameInstance's EnemyHandler object, while the Towers are directly kept track of by the gameInstance object itself.
+
+The Terrainmap object is linked directly to both the GameInstance and the EnemyHandler, since they both need to access MapTiles by their xy-coordinates. It is currently responsible for both pathfinding and generating the map from a bitmap image.
+
+To avoid loading the same image multiple times, the images are all preloaded and accessed from an image library in the ImageLoader class. Every class that represents a graphical object has its own draw method(s). 
