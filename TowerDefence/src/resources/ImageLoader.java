@@ -75,6 +75,11 @@ public class ImageLoader {
         } catch (IOException e) {
             System.out.println("couldn't find image");
         }
+        try {
+            imageLibrary.put("tileset", ImageIO.read(new File("tileset.png")));
+        } catch (IOException e) {
+            System.out.println("couldn't find image");
+        }
         
     }
 }

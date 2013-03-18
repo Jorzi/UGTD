@@ -28,8 +28,8 @@ public class TerrainMap {
     public static int[] target = {9, 26};
     public static Point spawn = new Point(47, 14);
     private BufferedImage mapImage;
-    private BufferedImage tile1 = ImageLoader.imageLibrary.get("sandTile1");
-    private BufferedImage tile2 = ImageLoader.imageLibrary.get("rockTile1");
+    private BufferedImage tileset = ImageLoader.imageLibrary.get("tileset");
+    private BufferedImage[] tiles = new BufferedImage[64];
     private BufferedImage bunker = ImageLoader.imageLibrary.get("hqBunker");
     private int[][] pixels; // tile index array
     private MapTile[][] navigationGraph;
@@ -42,6 +42,7 @@ public class TerrainMap {
 
         fillTileArrays();
         generateConnectivity();
+        loadTiles();
     }
 
     /**
@@ -53,7 +54,7 @@ public class TerrainMap {
             for (int j = 0; j < pixels[0].length; j++) {
                 int value = mapImage.getRGB(i, j);
                 value = value & 255;
-                pixels[i][j] = value;
+                pixels[i][j] = value > 0 ? 3 : 0;
                 if (value == 0) {
                     navigationGraph[i][j] = new MapTile(i, j);
                 }
@@ -61,6 +62,129 @@ public class TerrainMap {
             }
             //System.out.println();
         }
+        for (int i = 0; i < pixels.length; i++) {
+            for (int j = 0; j < pixels[0].length; j++) {
+                pixels[i][j] = determineTileType(i, j);
+            }
+        }
+    }
+
+    private void loadTiles() {
+        for (int i = 0; i < 64; i++) {
+            tiles[i] = tileset.getSubimage((i % 8) * GlobalConstants.tileSize, (i / 8) * GlobalConstants.tileSize,
+                    GlobalConstants.tileSize, GlobalConstants.tileSize);
+        }
+    }
+    
+    private String getNeighbours(int x, int y){
+        String s = "";
+        if(y == 0 || x == pixels.length - 1 || pixels[x+1][y-1] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }if(x == pixels.length - 1 || pixels[x+1][y] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }if(y == pixels[0].length - 1 || x == pixels.length - 1 || pixels[x+1][y+1] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }if(y == pixels[0].length - 1 || pixels[x][y+1] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }if(y == pixels[0].length - 1 || x == 0 || pixels[x-1][y+1] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }if(x == 0 || pixels[x-1][y] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }if(y == 0 || x == 0 || pixels[x-1][y-1] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }if(y == 0 || pixels[x][y-1] != 0){
+            s += "1";
+        }else{
+            s += "0";
+        }
+        return s;
+    }
+
+    private int determineTileType(int x, int y) {
+        if(pixels[x][y] == 0){
+            return 0;
+        }
+        String neighbours = getNeighbours(x, y);
+        //fill
+        if(neighbours.equals("11111111")){
+            if((x + pixels.length * y)%11 == 0){
+                return 7;
+            }
+            if((x + pixels.length * y)%5 == 0){
+                return 6;
+            }
+            if((x + pixels.length * y)%2 == 0){
+                return 5;
+            }
+            return 4;
+        }
+        //straight
+        if(neighbours.charAt(1)=='0' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='1'){
+            return 16;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='0' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='1'){
+            return 17;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='0' && neighbours.charAt(7)=='1'){
+            return 18;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='0'){
+            return 19;
+        }
+        //outer L
+        if(neighbours.charAt(1)=='0' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='0'){
+            return 8;
+        }
+        if(neighbours.charAt(1)=='0' && neighbours.charAt(3)=='0' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='1'){
+            return 9;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='0' && neighbours.charAt(5)=='0' && neighbours.charAt(7)=='1'){
+            return 10;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='0' && neighbours.charAt(7)=='0'){
+            return 11;
+        }
+        //inner L
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='1' && neighbours.charAt(0)=='0'){
+            return 12;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='1' && neighbours.charAt(2)=='0'){
+            return 13;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='1' && neighbours.charAt(4)=='0'){
+            return 14;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='1' && neighbours.charAt(6)=='0'){
+            return 15;
+        }
+        //point
+        if(neighbours.charAt(1)=='0' && neighbours.charAt(3)=='0' && neighbours.charAt(5)=='1' && neighbours.charAt(7)=='0'){
+            return 20;
+        }
+        if(neighbours.charAt(1)=='0' && neighbours.charAt(3)=='0' && neighbours.charAt(5)=='0' && neighbours.charAt(7)=='1'){
+            return 21;
+        }
+        if(neighbours.charAt(1)=='1' && neighbours.charAt(3)=='0' && neighbours.charAt(5)=='0' && neighbours.charAt(7)=='0'){
+            return 22;
+        }
+        if(neighbours.charAt(1)=='0' && neighbours.charAt(3)=='1' && neighbours.charAt(5)=='0' && neighbours.charAt(7)=='0'){
+            return 23;
+        }
+        return 3;
     }
 
     /**
@@ -106,15 +230,11 @@ public class TerrainMap {
         Graphics2D g2d = (Graphics2D) g;
         for (int i = 0; i < pixels.length; i++) {
             for (int j = 0; j < pixels[0].length; j++) {
-                if (pixels[i][j] == 0) {
-                    g2d.drawImage(tile1, GlobalConstants.tileSize * i, GlobalConstants.tileSize * j, imOb);
+                g2d.drawImage(tiles[pixels[i][j]], GlobalConstants.tileSize * i, GlobalConstants.tileSize * j, imOb);
 //                    if(getTile(i, j).getEnemy() != null){
 //                        g2d.setColor(new Color(200, 20, 20, 64));
 //                        g2d.fillRect(i*GlobalConstants.tileSize, j*GlobalConstants.tileSize, GlobalConstants.tileSize, GlobalConstants.tileSize);
 //                    }
-                } else {
-                    g2d.drawImage(tile2, GlobalConstants.tileSize * i, GlobalConstants.tileSize * j, imOb);
-                }
             }
         }
         g2d.drawImage(bunker, GlobalConstants.tileSize * target[0] - 16, GlobalConstants.tileSize * target[1] - 16, imOb);
